@@ -1,0 +1,30 @@
+build:
+  maxIssues: 100500
+  excludeCorrectable: false
+
+config:
+  validation: true
+  warningsAsErrors: false
+  excludes: ''
+
+complexity:
+  active: true
+
+  LongMethod:
+    active: true
+    threshold: 50
+    excludes: ["**/test/**", "**/androidTest/**", "**/commonTest/**"]
+    ignoreAnnotated: ["Composable"]
+
+  LongParameterList:
+    active: true
+    functionThreshold: 6
+    constructorThreshold: 6
+    ignoreDefaultParameters: true
+    ignoreDataClasses: true
+    ignoreAnnotated: ["Inject", "InjectConstructor", "Composable"]
+
+  LargeClass:
+    active: true
+    threshold: 350
+    excludes: ["**/test/**", "**/androidTest/**", "**/commonTest/**"]

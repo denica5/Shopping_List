@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     id("com.google.dagger.hilt.android")
     id("com.google.devtools.ksp")
+    id("io.gitlab.arturbosch.detekt")
 }
 
 android {
@@ -46,6 +47,31 @@ android {
     }
 }
 
+detekt {
+    config.setFrom(files("$rootDir/conf/detekt.yml"))
+    buildUponDefaultConfig = true
+    autoCorrect = false
+
+    reports {
+        html {
+            required.set(true)
+            outputLocation.set(file("$rootDir/build/reports/detekt/problems-report.html"))
+        }
+
+        xml.required.set(false)
+        txt.required.set(false)
+    }
+}
+
+tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
+    reports {
+        html.required.set(true)
+        html.outputLocation.set(file("$rootDir/build/reports/detekt/problems-report.html"))
+        xml.required.set(false)
+        txt.required.set(false)
+    }
+}
+
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -72,4 +98,5 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+    detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.23.8")
 }
