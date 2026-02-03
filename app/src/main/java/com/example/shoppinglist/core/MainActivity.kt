@@ -1,4 +1,4 @@
-package com.example.shoppinglist.features.main
+package com.example.shoppinglist.core
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -13,7 +13,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.shoppinglist.core.navigation.NavigationRoot
 import com.example.shoppinglist.core.theme.ShoppingListTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
