@@ -1,6 +1,6 @@
 package com.example.shoppinglist.core.ui.buttonLibrary
 
-object ShoppingListButtons {
+object SLButtons {
 
 }
 
