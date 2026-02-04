@@ -46,7 +46,6 @@ fun SlInputTextField(
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     labelText: String = "",
-    showLabel: Boolean = true,
     placeholder: String? = null,
     singleLine: Boolean = true,
     textStyle: TextStyle = MaterialTheme.typography.bodyLarge,
@@ -60,7 +59,6 @@ fun SlInputTextField(
         },
         modifier = modifier,
         labelText = labelText,
-        showLabel = showLabel,
         placeholder = placeholder,
         singleLine = singleLine,
         textColor = colors.textColor,
@@ -78,7 +76,6 @@ fun SlInputNumberField(
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     labelText: String = "",
-    showLabel: Boolean = true,
     placeholder: String? = null,
     singleLine: Boolean = true,
     textStyle: TextStyle = MaterialTheme.typography.bodyLarge,
@@ -99,7 +96,6 @@ fun SlInputNumberField(
         },
         modifier = modifier,
         labelText = labelText,
-        showLabel = showLabel,
         placeholder = placeholder,
         singleLine = singleLine,
         textColor = colors.textColor,
@@ -117,7 +113,6 @@ private fun SlTextField(
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     labelText: String = "",
-    showLabel: Boolean = true,
     placeholder: String? = null,
     singleLine: Boolean = true,
     textColor: Color = MaterialTheme.colorScheme.onSurface,
@@ -135,7 +130,7 @@ private fun SlTextField(
             singleLine = singleLine,
             enabled = true,
             textStyle = textStyle,
-            label = if (showLabel && labelText.isNotEmpty()) {
+            label = if (labelText.isNotEmpty()) {
                 {
                     Text(
                         text = labelText,
