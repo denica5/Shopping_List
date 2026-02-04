@@ -17,6 +17,29 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.shoppinglist.core.theme.ShoppingListTheme
 
+data class SlTextFieldColors(
+    val textColor: Color,
+    val labelColor: Color,
+    val labelBackgroundColor: Color,
+    val borderColor: Color,
+)
+
+object SlTextFieldDefaults {
+    @Composable
+    fun colors(
+        textColor: Color = MaterialTheme.colorScheme.onSurface,
+        labelColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
+        labelBackgroundColor: Color = MaterialTheme.colorScheme.surface,
+        borderColor: Color = MaterialTheme.colorScheme.outline,
+    ): SlTextFieldColors =
+        SlTextFieldColors(
+            textColor = textColor,
+            labelColor = labelColor,
+            labelBackgroundColor = labelBackgroundColor,
+            borderColor = borderColor,
+        )
+}
+
 @Composable
 fun SlInputTextField(
     value: String,
@@ -26,11 +49,8 @@ fun SlInputTextField(
     showLabel: Boolean = true,
     placeholder: String? = null,
     singleLine: Boolean = true,
-    textColor: Color = MaterialTheme.colorScheme.onSurface,
     textStyle: TextStyle = MaterialTheme.typography.bodyLarge,
-    labelColor: Color = MaterialTheme.colorScheme.primary,
-    labelBackgroundColor: Color = MaterialTheme.colorScheme.surface,
-    borderColor: Color = MaterialTheme.colorScheme.primary,
+    colors: SlTextFieldColors = SlTextFieldDefaults.colors(),
 ) {
     val safeValue = value.take(64)
     SlTextField(
@@ -43,11 +63,11 @@ fun SlInputTextField(
         showLabel = showLabel,
         placeholder = placeholder,
         singleLine = singleLine,
-        textColor = textColor,
+        textColor = colors.textColor,
         textStyle = textStyle,
-        labelColor = labelColor,
-        labelBackgroundColor = labelBackgroundColor,
-        borderColor = borderColor,
+        labelColor = colors.labelColor,
+        labelBackgroundColor = colors.labelBackgroundColor,
+        borderColor = colors.borderColor,
         keyboardOptions = KeyboardOptions.Default,
     )
 }
@@ -61,11 +81,8 @@ fun SlInputNumberField(
     showLabel: Boolean = true,
     placeholder: String? = null,
     singleLine: Boolean = true,
-    textColor: Color = MaterialTheme.colorScheme.onSurface,
     textStyle: TextStyle = MaterialTheme.typography.bodyLarge,
-    labelColor: Color = MaterialTheme.colorScheme.primary,
-    labelBackgroundColor: Color = MaterialTheme.colorScheme.surface,
-    borderColor: Color = MaterialTheme.colorScheme.primary,
+    colors: SlTextFieldColors = SlTextFieldDefaults.colors(),
 ) {
     fun filter(input: String): String =
         input.filter { it.isDigit() || it == '.' }.take(10)
@@ -85,11 +102,11 @@ fun SlInputNumberField(
         showLabel = showLabel,
         placeholder = placeholder,
         singleLine = singleLine,
-        textColor = textColor,
+        textColor = colors.textColor,
         textStyle = textStyle,
-        labelColor = labelColor,
-        labelBackgroundColor = labelBackgroundColor,
-        borderColor = borderColor,
+        labelColor = colors.labelColor,
+        labelBackgroundColor = colors.labelBackgroundColor,
+        borderColor = colors.borderColor,
         keyboardOptions = numberKeyboard,
     )
 }
@@ -150,9 +167,9 @@ private fun SlTextField(
                 unfocusedTextColor = textColor,
                 focusedContainerColor = containerColor,
                 unfocusedContainerColor = containerColor,
-                focusedLabelColor = labelColor,
+                focusedLabelColor = MaterialTheme.colorScheme.primary,
                 unfocusedLabelColor = labelColor,
-                focusedBorderColor = borderColor,
+                focusedBorderColor = MaterialTheme.colorScheme.primary,
                 unfocusedBorderColor = borderColor,
             )
         )
