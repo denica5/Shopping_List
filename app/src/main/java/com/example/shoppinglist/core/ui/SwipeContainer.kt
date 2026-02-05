@@ -25,9 +25,9 @@ fun <T> SwipeContainer(
     controller: SwipeCardController,
     maxOffset: Dp = 240.dp,
     modifier: Modifier = Modifier,
-    background1: @Composable BoxScope.() -> Unit,
-    background2: @Composable BoxScope.() -> Unit,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
+    mainBackground: @Composable BoxScope.() -> Unit,
+    extendedBackground: @Composable BoxScope.() -> Unit
 ) {
     val density = LocalDensity.current
     val maxOffsetPx = with(density) { maxOffset.toPx() }
@@ -54,7 +54,7 @@ fun <T> SwipeContainer(
                     }
                 }
         ) {
-            background2()
+            extendedBackground()
         }
 
         Box(
@@ -69,7 +69,7 @@ fun <T> SwipeContainer(
                     }
                 }
         ) {
-            background1()
+            mainBackground()
         }
 
         Box(
