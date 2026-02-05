@@ -1,4 +1,20 @@
 <resources>
-    <string name="app_name">Shopping List</string>
-    <string name="title_activity_nav_host">NavHost</string>
+    <string name="app_name" translatable="false">Shopping List</string>
+    <string name="title_activity_nav_host" translatable="false">NavHost</string>
+    <string name="main_title" translatable="false">Список Покупок</string>
+    <string name="my_lists_title" translatable="false">Мои списки</string>
+    <string name="products_title" translatable="false">Продукты</string>
+    <string name="add_new_product_placeholder" translatable="false">Добавить новый товар</string>
+    <string name="product_textfield_lable" translatable="false">Товар</string>
+    <string name="dialog_add_list_title" translatable="false">Добавление списка</string>
+    <string name="dialog_list_rename" translatable="false">Переименование списка</string>
+    <string name="dialog_list_name_label" translatable="false">Название списка</string>
+    <string name="dialog_list_name_placeholder" translatable="false">Новый список</string>
+    <string name="dialog_button_cancel" translatable="false">Отмена</string>
+    <string name="dialog_button_create" translatable="false">Создать</string>
+    <string name="dialog_button_delete" translatable="false">Удалить</string>
+    <string name="dialog_button_rename" translatable="false">Переименовать</string>
+    <string name="dialog_preview_list_name" translatable="false">Продукты</string>
+    <string name="dialog_delete_list_title" translatable="false">Удалить список «%1$s»?</string>
+    <string name="dialog_delete_all_lists" translatable="false">Удалить все списки?</string>
 </resources>

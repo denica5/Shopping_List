@@ -1,4 +1,4 @@
-package com.example.shoppinglist.core.ui
+package com.example.shoppinglist.core.presentation.ui.components
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

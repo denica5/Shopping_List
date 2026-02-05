@@ -1,4 +1,4 @@
-package com.example.shoppinglist.core.ui
+package com.example.shoppinglist.core.presentation.ui.components
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
+import kotlin.math.abs
 import kotlin.math.roundToInt
 
 @Composable
@@ -97,7 +98,7 @@ fun <T> SwipeContainer(
                             )
 
                             val nearest = anchors.minByOrNull {
-                                kotlin.math.abs(it - offsetX.value)
+                                abs(it - offsetX.value)
                             } ?: 0f
 
                             scope.launch {

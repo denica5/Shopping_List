@@ -1,4 +1,4 @@
-package com.example.shoppinglist.core.ui.buttonLibrary
+package com.example.shoppinglist.core.presentation.ui.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
@@ -20,7 +20,7 @@ import com.example.shoppinglist.core.theme.ShoppingListTheme
 
 @Stable
 @Composable
-fun SLButtons.SLElevatedButton(
+fun SlButtons.SlElevatedButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
     shape: Shape = RoundedCornerShape(16.dp),
@@ -50,9 +50,9 @@ fun SLButtons.SLElevatedButton(
 
 @Preview
 @Composable
-fun PreviewButtonSL() {
+fun PreviewButtonSl() {
     ShoppingListTheme(dynamicColor = false) {
-        SLButtons.SLElevatedButton(
+        SlButtons.SlElevatedButton(
             modifier = Modifier.size(56.dp), {}, RoundedCornerShape(16.dp),
             Icons.Default.Check
         )
