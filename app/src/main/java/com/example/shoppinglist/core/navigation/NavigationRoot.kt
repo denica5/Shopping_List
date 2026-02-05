@@ -1,5 +1,4 @@
 package com.example.shoppinglist.core.navigation
-
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
@@ -24,13 +23,18 @@ fun NavigationRoot(modifier: Modifier = Modifier) {
                     subclass(Route.ListDetailScreen::class, Route.ListDetailScreen.serializer())
                 }
             }
-        }, Route.MyListsScreen
+        },
+        Route.MyListsScreen
     )
+
     NavDisplay(
-        modifier = modifier, backStack = backStack, entryDecorators = listOf(
+        modifier = modifier,
+        backStack = backStack,
+        entryDecorators = listOf(
             rememberSaveableStateHolderNavEntryDecorator(),
             rememberViewModelStoreNavEntryDecorator { false }
-        ), entryProvider = { key ->
+        ),
+        entryProvider = { key ->
             when (key) {
                 is Route.MyListsScreen -> {
                     NavEntry(key) {
@@ -48,11 +52,11 @@ fun NavigationRoot(modifier: Modifier = Modifier) {
                         ListDetailScreen(key.todo)
                     }
                 }
-
                 else -> {
                     error("Unknown NavKey: $key")
                 }
             }
 
-        })
+        }
+    )
 }
