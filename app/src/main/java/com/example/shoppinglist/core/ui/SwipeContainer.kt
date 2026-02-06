@@ -7,8 +7,12 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.offset
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
@@ -27,13 +31,16 @@ fun <T> SwipeContainer(
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit,
     mainBackground: @Composable BoxScope.() -> Unit,
-    extendedBackground: @Composable BoxScope.() -> Unit
+    extendedBackground: @Composable BoxScope.() -> Unit,
+    onFullySwiped: () -> Unit = {}
 ) {
     val density = LocalDensity.current
     val maxOffsetPx = with(density) { maxOffset.toPx() }
 
     val offsetX = remember { Animatable(0f) }
     val scope = rememberCoroutineScope()
+
+    var triggered by remember { mutableStateOf(false) }
 
     LaunchedEffect(controller.activeCardId) {
         if (controller.activeCardId != id) {
@@ -108,6 +115,20 @@ fun <T> SwipeContainer(
                 }
         ) {
             content()
+        }
+
+        LaunchedEffect(offsetX) {
+            snapshotFlow { offsetX.value }
+                .collect { value ->
+                    if (value <= -maxOffsetPx * 0.7f && !triggered) {
+                        triggered = true
+                        onFullySwiped()
+                    }
+
+                    if (value > -maxOffsetPx * 0.7f) {
+                        triggered = false
+                    }
+                }
         }
     }
 }
