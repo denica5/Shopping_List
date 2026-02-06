@@ -1,4 +1,4 @@
-package com.example.shoppinglist.core.ui.buttonLibrary
+package com.example.shoppinglist.core.presentation.ui.components
 
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
@@ -19,7 +19,7 @@ import com.example.shoppinglist.core.theme.ShoppingListTheme
 
 @Stable
 @Composable
-fun SLButtons.SLIcon(
+fun SlButtons.SlIcon(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
     painter: Painter,
@@ -47,9 +47,9 @@ fun SLButtons.SLIcon(
 
 @Preview
 @Composable
-fun SLIconPreview() {
+fun SlIconPreview() {
     ShoppingListTheme(dynamicColor = false) {
-        SLButtons.SLIcon(
+        SlButtons.SlIcon(
             onClick = {},
             painter = painterResource(R.drawable.close),
             containerColor = MaterialTheme.colorScheme.primaryContainer,
