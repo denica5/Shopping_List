@@ -9,38 +9,48 @@ import androidx.compose.runtime.Stable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.sp
 import com.example.shoppinglist.core.theme.ShoppingListTheme
 
 
 @Stable
 @Composable
-fun SlButtons.SlTextButton(
+fun SlButtons.SLTextButton(
     modifier: Modifier = Modifier,
-    text: String,
     onClick: () -> Unit,
-) {
+    text: String,
+    containerColor: Color = Color.Transparent,
+    contentColor: Color = MaterialTheme.colorScheme.onSecondaryContainer,
+    disabledContainerColor: Color = Color.Transparent,
+    disabledContentColor: Color = Color.Transparent,
+    textFontSize: TextUnit = 12.sp,
+
+
+    ) {
     Button(
         onClick = onClick,
         modifier = modifier,
         colors = ButtonDefaults.buttonColors(
-            containerColor = Color.Transparent,
-            contentColor = MaterialTheme.colorScheme.primary,
+            containerColor = containerColor,
+            contentColor = contentColor,
+            disabledContainerColor = disabledContainerColor,
+            disabledContentColor = disabledContentColor
         )
     ) {
-        Text(
-            text = text,
-            style = MaterialTheme.typography.labelLarge,
-        )
+        Text(text = text, fontSize = textFontSize)
     }
 }
 
 @Preview
 @Composable
-fun PreviewSlTextButton() {
+fun PreviewSLTextButton() {
     ShoppingListTheme(dynamicColor = false) {
-        SlButtons.SlTextButton(
-            text = "Отменить",
+        SlButtons.SLTextButton(
             onClick = {},
+            text = "Отменить",
+            containerColor = MaterialTheme.colorScheme.primaryContainer
         )
     }
 }
+
