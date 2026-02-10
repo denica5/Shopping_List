@@ -9,7 +9,7 @@ import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import androidx.savedstate.serialization.SavedStateConfiguration
 import com.example.shoppinglist.features.listDetailScreen.presentation.ListDetailScreen
-import com.example.shoppinglist.features.myListsScreen.presentation.MyListsScreen
+import com.example.shoppinglist.features.productLists.presentation.ProductListsScreen
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 
@@ -38,7 +38,7 @@ fun NavigationRoot(modifier: Modifier = Modifier) {
             when (key) {
                 is Route.MyListsScreen -> {
                     NavEntry(key) {
-                        MyListsScreen(
+                        ProductListsScreen(
                             onItemClick =
                                 {
                                     backStack.add(Route.ListDetailScreen(it))

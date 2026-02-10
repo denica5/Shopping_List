@@ -1,6 +1,24 @@
 <resources>
-    <string name="app_name" translatable="false">Shopping List</string>
-    <string name="title_activity_nav_host" translatable="false">NavHost</string>
+    <string name="app_name">Shopping List</string>
+    <string name="title_activity_nav_host">NavHost</string>
+
+    <string name="my_lists">Мои списки</string>
+    <string name="you_dont_have_lists">У вас пока нет списков</string>
+    <string name="click_button_create_list">Нажмите на кнопку + ниже, чтобы создать свой первый список</string>
+    <string name="adding_list">Добавление списка</string>
+    <string name="list_name">Название списка</string>
+    <string name="cancel">Отмена</string>
+    <string name="create">Создать</string>
+    <string name="delete_all_lists">Удалить все списки?</string>
+    <string name="delete">Удалить</string>
+    <string name="search_lists">Поиск списков</string>
+    <string name="renaming_list">Переименование списка</string>
+    <string name="rename">Переименовать</string>
+
+    <string name="couldnt_find_looking_for">Мы не смогли найти то, что вы искали</string>
+    <string name="changing_your_query">Попробуйте изменить запрос или проверить написание</string>
+
+    <string name="delete_list_name">Удалить список «%1$s»?</string>
     <string name="main_title" translatable="false">Список Покупок</string>
     <string name="my_lists_title" translatable="false">Мои списки</string>
     <string name="products_title" translatable="false">Продукты</string>

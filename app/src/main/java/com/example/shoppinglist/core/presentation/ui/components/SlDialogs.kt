@@ -9,9 +9,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.List
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -27,11 +24,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.example.shoppinglist.R
+import com.example.shoppinglist.core.theme.AppDimens
 import com.example.shoppinglist.core.theme.ShoppingListTheme
-import com.example.shoppinglist.ui.theme.AppDimens
 
 object SlDialogs {
     @Stable
@@ -61,7 +57,10 @@ object SlDialogs {
             ) {
                 Column(
                     modifier = Modifier
-                        .padding(horizontal = AppDimens.DialogPaddingHorizontal, vertical = AppDimens.DialogPaddingVertical),
+                        .padding(
+                            horizontal = AppDimens.DialogPaddingHorizontal,
+                            vertical = AppDimens.DialogPaddingVertical
+                        ),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     if (icon != null) {
@@ -97,14 +96,14 @@ object SlDialogs {
                         horizontalArrangement = Arrangement.End,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        SlButtons.SlTextButton(
+                        SlButtons.SLTextButton(
                             text = dismissButtonText,
                             onClick = onDismissClick,
                         )
 
                         Spacer(modifier = Modifier.width(AppDimens.DialogTextButtonsSpacing))
 
-                        SlButtons.SlTextButton(
+                        SlButtons.SLTextButton(
                             text = confirmButtonText,
                             onClick = onConfirmClick,
                         )
@@ -138,7 +137,10 @@ object SlDialogs {
             ) {
                 Column(
                     modifier = Modifier
-                        .padding(horizontal = AppDimens.DialogPaddingHorizontal, vertical = AppDimens.DialogPaddingVertical),
+                        .padding(
+                            horizontal = AppDimens.DialogPaddingHorizontal,
+                            vertical = AppDimens.DialogPaddingVertical
+                        ),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Icon(

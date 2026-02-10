@@ -10,7 +10,7 @@ object AppColors {
 
     val BackgroundDark = Color(0xff19120C)
 
-    val SurfaceLight = Color(0xffFFF8F4)
+    val SurfaceLight = Color(0xFFFFF8F4)
 
     val SurfaceDark = Color(0xff19120C)
 

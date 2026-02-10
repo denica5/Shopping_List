@@ -7,6 +7,13 @@ import androidx.compose.ui.unit.sp
 
 val Typography = Typography(
 
+    titleMedium = TextStyle(
+        fontFamily = Roboto,
+        fontWeight = FontWeight.Medium,
+        fontSize = 16.sp,
+        lineHeight = 24.sp,
+        letterSpacing = 0.15.sp
+    ),
     titleLarge = TextStyle(
         fontFamily = Roboto,
         fontWeight = FontWeight.Normal,
