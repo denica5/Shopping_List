@@ -1,4 +1,5 @@
 package com.example.shoppinglist.core.navigation
+
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
@@ -9,6 +10,7 @@ import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import androidx.savedstate.serialization.SavedStateConfiguration
 import com.example.shoppinglist.features.listDetailScreen.presentation.ListDetailScreen
+import com.example.shoppinglist.features.login.presentation.LoginScreen
 import com.example.shoppinglist.features.productLists.presentation.ProductListsScreen
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
@@ -19,12 +21,13 @@ fun NavigationRoot(modifier: Modifier = Modifier) {
         configuration = SavedStateConfiguration {
             serializersModule = SerializersModule {
                 polymorphic(NavKey::class) {
-                    subclass(Route.MyListsScreen::class, Route.MyListsScreen.serializer())
+                    subclass(Route.ProductLists::class, Route.ProductLists.serializer())
                     subclass(Route.ListDetailScreen::class, Route.ListDetailScreen.serializer())
+                    subclass(Route.LoginScreen::class, Route.LoginScreen.serializer())
                 }
             }
         },
-        Route.MyListsScreen
+        Route.LoginScreen
     )
 
     NavDisplay(
@@ -36,7 +39,7 @@ fun NavigationRoot(modifier: Modifier = Modifier) {
         ),
         entryProvider = { key ->
             when (key) {
-                is Route.MyListsScreen -> {
+                is Route.ProductLists -> {
                     NavEntry(key) {
                         ProductListsScreen(
                             onItemClick =
@@ -52,6 +55,16 @@ fun NavigationRoot(modifier: Modifier = Modifier) {
                         ListDetailScreen(key.todo)
                     }
                 }
+
+                is Route.LoginScreen -> {
+                    NavEntry(key) {
+                        LoginScreen(onItemClick = {
+                            backStack.add(Route.ProductLists)
+                            }
+                        )
+                    }
+                }
+
                 else -> {
                     error("Unknown NavKey: $key")
                 }
