@@ -11,6 +11,7 @@ import androidx.navigation3.ui.NavDisplay
 import androidx.savedstate.serialization.SavedStateConfiguration
 import com.example.shoppinglist.features.listDetailScreen.presentation.ListDetailScreen
 import com.example.shoppinglist.features.login.presentation.LoginScreen
+import com.example.shoppinglist.features.login.presentation.RegisterScreen
 import com.example.shoppinglist.features.productLists.presentation.ProductListsScreen
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
@@ -58,10 +59,22 @@ fun NavigationRoot(modifier: Modifier = Modifier) {
 
                 is Route.LoginScreen -> {
                     NavEntry(key) {
-                        LoginScreen(onItemClick = {
-                            backStack.add(Route.ProductLists)
+                        LoginScreen(
+                            onSignInClick = {
+                                backStack.add(Route.ProductLists)
+                            },
+                            onCreateNewAccountClick = {
+                                backStack.add(Route.RegisterScreen)
                             }
                         )
+                    }
+                }
+
+                is Route.RegisterScreen -> {
+                    NavEntry(key) {
+                        RegisterScreen(
+                            onRegisterClick = { backStack.remove(key) },
+                            onBackArrowClick = { backStack.remove(key) })
                     }
                 }
 
