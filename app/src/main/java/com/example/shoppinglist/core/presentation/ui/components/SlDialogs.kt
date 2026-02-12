@@ -50,7 +50,7 @@ object SlDialogs {
 
         Dialog(onDismissRequest = onDismissClick) {
             Surface(
-                modifier = Modifier
+                modifier = modifier
                     .width(AppDimens.DialogWidth),
                 shape = RoundedCornerShape(AppDimens.RadiusDialogDefault),
                 color = MaterialTheme.colorScheme.surface,
@@ -130,7 +130,7 @@ object SlDialogs {
 
         Dialog(onDismissRequest = onDismissClick) {
             Surface(
-                modifier = Modifier
+                modifier = modifier
                     .width(AppDimens.DialogWidth),
                 shape = RoundedCornerShape(AppDimens.RadiusDialogDefault),
                 color = MaterialTheme.colorScheme.surface,
