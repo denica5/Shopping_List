@@ -1,5 +1,18 @@
 package com.example.shoppinglist.features.products.presentation
 
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.shoppinglist.features.products.domain.entity.Product
+import com.example.shoppinglist.features.products.domain.usecase.CreateProductUseCase
+import com.example.shoppinglist.features.products.domain.usecase.DeleteAllProductsByListIdUseCase
+import com.example.shoppinglist.features.products.domain.usecase.DeleteProductByIdUseCase
+import com.example.shoppinglist.features.products.domain.usecase.GetProductsByListIdUseCase
+import com.example.shoppinglist.features.products.domain.usecase.ToggleProductCheckedUseCase
+import com.example.shoppinglist.features.products.domain.usecase.UpdateProductUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
+import jakarta.inject.Inject
+
 @HiltViewModel
 class ProductsViewModel @Inject constructor(
     private val getProductsByListId: GetProductsByListIdUseCase,
