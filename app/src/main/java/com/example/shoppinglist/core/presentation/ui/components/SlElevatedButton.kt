@@ -26,26 +26,6 @@ fun SlButtons.SlElevatedButton(
     shape: Shape = RoundedCornerShape(16.dp),
     iconPainter: Painter,
 ) {
-//    Surface(
-//        modifier = modifier,
-//        shape = shape,
-//        color = MaterialTheme.colorScheme.primaryContainer,
-//        shadowElevation = 3.dp,
-//        tonalElevation = 0.dp,
-//        onClick = onClick
-//    ) {
-//        Box(
-//            modifier = Modifier.size(56.dp),
-//            contentAlignment = Alignment.Center
-//        ) {
-//            Icon(
-//                imageVector = imageVector,
-//                contentDescription = "",
-//                tint = MaterialTheme.colorScheme.onPrimaryContainer,
-//                modifier = Modifier.size(24.dp)
-//            )
-//        }
-//    }
     FloatingActionButton(
         onClick = onClick,
         modifier = modifier,
@@ -66,7 +46,7 @@ fun SlButtons.SlElevatedButton(
 @Composable
 fun PreviewButtonSl() {
     ShoppingListTheme(dynamicColor = false) {
-        Box(){
+        Box() {
             SlButtons.SlElevatedButton(
                 modifier = Modifier.size(56.dp), {}, RoundedCornerShape(16.dp),
                 painterResource(R.drawable.plus)
