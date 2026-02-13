@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.shoppinglist.core.theme.ShoppingListTheme
 
@@ -126,8 +127,8 @@ object SlTextFields {
                     {
                         Text(
                             text = labelText,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = labelColor,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
                             modifier = if (labelBackgroundColor != Color.Unspecified) {
                                 Modifier.background(labelBackgroundColor)
                             } else {
@@ -144,6 +145,8 @@ object SlTextFields {
                             text = text,
                             style = MaterialTheme.typography.bodyLarge,
                             color = textColor.copy(alpha = 0.6f),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
                         )
                     }
                 },
@@ -216,5 +219,3 @@ private fun SlNumberFieldPreview() {
         }
     }
 }
-
-
