@@ -37,7 +37,7 @@ class ListDetailViewModel @Inject constructor() :
             is ListDetailEvent.TogglePurchased -> togglePurchased(event.product)
             is ListDetailEvent.DeleteProduct -> deleteProduct(event.product)
             is ListDetailEvent.MoveProduct -> moveProduct(event.fromIndex, event.toIndex)
-            is ListDetailEvent.MenuClick -> showMenu()
+            is ListDetailEvent.MenuClick -> toggleMenu()
             is ListDetailEvent.DismissMenuSheet -> dismissMenu()
             is ListDetailEvent.ToggleSortSubmenu -> toggleSortSubmenu()
             is ListDetailEvent.SetSortMode -> setSortMode(event.sortMode)
@@ -210,6 +210,14 @@ class ListDetailViewModel @Inject constructor() :
                 isMenuSheetVisible = false,
                 isSortSubmenuVisible = false,
             )
+        }
+    }
+
+    private fun toggleMenu() {
+        if (_state.value.isMenuSheetVisible) {
+            dismissMenu()
+        } else {
+            showMenu()
         }
     }
 

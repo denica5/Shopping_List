@@ -2,8 +2,8 @@ package com.example.shoppinglist.core.di
 
 import com.example.shoppinglist.features.productLists.data.repository.ProductListsRepositoryImpl
 import com.example.shoppinglist.features.productLists.domain.repository.ProductListsRepository
-import com.example.shoppinglist.features.products.data.repository.ProductsRepositoryImpl
-import com.example.shoppinglist.features.products.domain.repository.ProductsRepository
+import com.example.shoppinglist.features.listDetailScreen.data.repository.ProductsRepositoryImpl
+import com.example.shoppinglist.features.listDetailScreen.domain.repository.ProductsRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

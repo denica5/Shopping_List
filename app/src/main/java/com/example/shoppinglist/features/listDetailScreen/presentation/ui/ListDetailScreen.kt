@@ -27,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -202,7 +203,7 @@ fun ListDetailScreen(
                 if (!state.isAddEditSheetVisible) {
                     SlButtons.SlElevatedButton(
                         onClick = { viewModel.obtainEvent(ListDetailEvent.AddProductClick) },
-                        imageVector = ImageVector.vectorResource(id = R.drawable.plus),
+                        iconPainter = painterResource(id = R.drawable.plus),
                         modifier = Modifier
                             .align(Alignment.BottomEnd)
                             .padding(16.dp),

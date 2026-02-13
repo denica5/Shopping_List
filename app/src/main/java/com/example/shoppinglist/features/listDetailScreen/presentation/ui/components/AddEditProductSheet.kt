@@ -81,7 +81,7 @@ fun AddEditProductSheet(
         ) {
             SlButtons.SlElevatedButton(
                 onClick = onSave,
-                imageVector = ImageVector.vectorResource(id = R.drawable.check),
+                iconPainter = painterResource(id = R.drawable.check),
             )
         }
 

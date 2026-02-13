@@ -1,6 +1,6 @@
-package com.example.shoppinglist.features.products.domain.repository
+package com.example.shoppinglist.features.listDetailScreen.domain.repository
 
-import com.example.shoppinglist.features.products.domain.entity.Product
+import com.example.shoppinglist.features.listDetailScreen.domain.entity.Product
 import kotlinx.coroutines.flow.Flow
 
 interface ProductsRepository {

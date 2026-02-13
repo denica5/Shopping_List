@@ -1,6 +1,6 @@
-package com.example.shoppinglist.features.products.domain.usecase
+package com.example.shoppinglist.features.listDetailScreen.domain.usecase
 
-import com.example.shoppinglist.features.products.domain.repository.ProductsRepository
+import com.example.shoppinglist.features.listDetailScreen.domain.repository.ProductsRepository
 import jakarta.inject.Inject
 
 class ToggleProductCheckedUseCase @Inject constructor(

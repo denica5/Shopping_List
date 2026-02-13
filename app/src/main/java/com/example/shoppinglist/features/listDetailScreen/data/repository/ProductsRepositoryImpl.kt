@@ -1,7 +1,7 @@
-package com.example.shoppinglist.features.products.data.repository
+package com.example.shoppinglist.features.listDetailScreen.data.repository
 
-import com.example.shoppinglist.features.products.domain.entity.Product
-import com.example.shoppinglist.features.products.domain.repository.ProductsRepository
+import com.example.shoppinglist.features.listDetailScreen.domain.entity.Product
+import com.example.shoppinglist.features.listDetailScreen.domain.repository.ProductsRepository
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
 import kotlinx.coroutines.flow.Flow

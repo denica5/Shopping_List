@@ -1,4 +1,4 @@
-package com.example.shoppinglist.features.products.domain.entity
+package com.example.shoppinglist.features.listDetailScreen.domain.entity
 
 data class Product(
     val id: Int,
