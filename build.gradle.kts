@@ -7,4 +7,5 @@ plugins {
     id("com.google.dagger.hilt.android") version "2.59" apply false
     id("com.google.devtools.ksp") version "2.3.4"
     id("io.gitlab.arturbosch.detekt") version "1.23.8"
+    id("com.google.gms.google-services") version "4.4.4" apply false
 }

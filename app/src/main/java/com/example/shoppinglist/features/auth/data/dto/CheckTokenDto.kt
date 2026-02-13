@@ -1,4 +1,4 @@
-package com.example.shoppinglist.features.login.data.dto
+package com.example.shoppinglist.features.auth.data.dto
 
 import kotlinx.serialization.Serializable
 

@@ -10,8 +10,9 @@ import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import androidx.savedstate.serialization.SavedStateConfiguration
 import com.example.shoppinglist.features.listDetailScreen.presentation.ListDetailScreen
-import com.example.shoppinglist.features.login.presentation.LoginScreen
-import com.example.shoppinglist.features.login.presentation.RegisterScreen
+import com.example.shoppinglist.features.auth.presentation.LoginScreen
+import com.example.shoppinglist.features.auth.presentation.PasswordRecoveryScreen
+import com.example.shoppinglist.features.auth.presentation.RegisterScreen
 import com.example.shoppinglist.features.productLists.presentation.ProductListsScreen
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
@@ -65,6 +66,9 @@ fun NavigationRoot(modifier: Modifier = Modifier) {
                             },
                             onCreateNewAccountClick = {
                                 backStack.add(Route.RegisterScreen)
+                            },
+                            onForgotPasswordClick = {
+                                backStack.add(Route.PasswordRecoveryScreen)
                             }
                         )
                     }
@@ -74,6 +78,14 @@ fun NavigationRoot(modifier: Modifier = Modifier) {
                     NavEntry(key) {
                         RegisterScreen(
                             onRegisterClick = { backStack.remove(key) },
+                            onBackArrowClick = { backStack.remove(key) })
+                    }
+                }
+
+                is Route.PasswordRecoveryScreen -> {
+                    NavEntry(key) {
+                        PasswordRecoveryScreen(
+                            onPasswordRecoveryClick = { backStack.remove(key) },
                             onBackArrowClick = { backStack.remove(key) })
                     }
                 }

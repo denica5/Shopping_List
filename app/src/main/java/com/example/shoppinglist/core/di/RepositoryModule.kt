@@ -1,9 +1,13 @@
 package com.example.shoppinglist.core.di
 
+import com.example.shoppinglist.features.auth.data.AuthRepositoryImpl
+import com.example.shoppinglist.features.auth.domain.AuthRepository
 import com.example.shoppinglist.features.productLists.data.repository.ProductListsRepositoryImpl
 import com.example.shoppinglist.features.productLists.domain.repository.ProductListsRepository
+import com.google.firebase.auth.FirebaseAuth
 import dagger.Binds
 import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import jakarta.inject.Singleton
@@ -17,4 +21,21 @@ abstract class RepositoryModule {
     abstract fun bindProductListsRepository(
         impl: ProductListsRepositoryImpl
     ): ProductListsRepository
+
+    @Binds
+    @Singleton
+        abstract fun bindAuthRepository(
+        impl: AuthRepositoryImpl
+    ): AuthRepository
+
+    @Module
+    @InstallIn(SingletonComponent::class)
+    object FirebaseModule {
+
+        @Provides
+        @Singleton
+        fun provideFirebaseAuth(): FirebaseAuth {
+            return FirebaseAuth.getInstance()
+        }
+    }
 }
