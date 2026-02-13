@@ -22,6 +22,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.shoppinglist.R
 import com.example.shoppinglist.core.presentation.ui.components.SlButtons
 import com.example.shoppinglist.core.presentation.ui.components.SlElevatedButton
+import com.example.shoppinglist.core.presentation.ui.components.SwipeCardController
 import com.example.shoppinglist.core.theme.AppDimens.PaddingBase
 import com.example.shoppinglist.core.theme.ShoppingListTheme
 import com.example.shoppinglist.features.productLists.domain.entity.ProductList
@@ -41,6 +42,7 @@ fun ProductListsScreen(
     val state = viewModel.state.collectAsStateWithLifecycle().value
     val action = viewModel.action.collectAsStateWithLifecycle().value
     var showDialog by remember { mutableStateOf(false) }
+    val swipeController = remember { SwipeCardController() }
 
     when (action) {
         is ProductListsAction.ShowCreateDialog -> {
@@ -58,6 +60,7 @@ fun ProductListsScreen(
         is ProductListsAction.ShowDeleteDialog -> {
             CustomDialogs.ShowDeleteDialog(action)
         }
+
         else -> {
             showDialog = false
         }
@@ -92,7 +95,7 @@ fun ProductListsScreen(
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     items(state.productLists) { list: ProductList ->
-                        ListCard(list, viewModel, onItemClick)
+                        ListCard(list, viewModel, swipeController, onItemClick)
                     }
                 }
             }
