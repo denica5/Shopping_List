@@ -22,6 +22,7 @@ import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -41,14 +42,15 @@ import com.example.shoppinglist.core.presentation.ui.components.SwipeCardControl
 import com.example.shoppinglist.core.theme.AppDimens
 import com.example.shoppinglist.core.theme.ShoppingListTheme
 import com.example.shoppinglist.features.listDetailScreen.presentation.components.AddEditSheetContent
-import com.example.shoppinglist.features.listDetailScreen.presentation.components.EmptyProductsContent
-import com.example.shoppinglist.features.listDetailScreen.presentation.components.MenuSheetContent
-import com.example.shoppinglist.features.listDetailScreen.presentation.components.ProductItem
-import com.example.shoppinglist.features.listDetailScreen.presentation.components.ProductsAppBar
 import com.example.shoppinglist.features.listDetailScreen.presentation.model.ListDetailAction
 import com.example.shoppinglist.features.listDetailScreen.presentation.model.ListDetailEvent
 import com.example.shoppinglist.features.listDetailScreen.presentation.model.ListDetailSheet
 import com.example.shoppinglist.features.listDetailScreen.presentation.model.SortMode
+import com.example.shoppinglist.features.listDetailScreen.presentation.ui.components.EmptyProductsContent
+import com.example.shoppinglist.features.listDetailScreen.presentation.ui.components.MenuSheetContent
+import com.example.shoppinglist.features.listDetailScreen.presentation.ui.components.ProductItem
+import com.example.shoppinglist.features.listDetailScreen.presentation.ui.components.ProductsAppBar
+import com.example.shoppinglist.features.listDetailScreen.presentation.viewmodel.ListDetailViewModel
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 
@@ -84,6 +86,16 @@ fun ListDetailScreen(
         },
         animationSpec = tween(durationMillis = 300),
     )
+
+    val prevProductCount = remember { mutableStateOf(state.products.size) }
+
+    LaunchedEffect(state.products.size) {
+        if (state.activeSheet == ListDetailSheet.AddEdit && state.products.size != prevProductCount.value) {
+            prevProductCount.value = state.products.size
+            bottomSheetState.partialExpand()
+            viewModel.dismissAddEditSheetAfterSave()
+        }
+    }
 
     LaunchedEffect(action) {
         when (action) {

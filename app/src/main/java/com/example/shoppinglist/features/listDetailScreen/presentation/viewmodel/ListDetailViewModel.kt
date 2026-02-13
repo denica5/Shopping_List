@@ -108,8 +108,7 @@ class ListDetailViewModel @Inject constructor() :
             _state.update {
                 it.copy(
                     products = applySorting(updatedProducts, it.sortMode),
-                    activeSheet = null,
-                    editingProduct = null,
+                    editingProduct = null
                 )
             }
         } else {
@@ -123,8 +122,7 @@ class ListDetailViewModel @Inject constructor() :
             val updatedProducts = currentState.products + newProduct
             _state.update {
                 it.copy(
-                    products = applySorting(updatedProducts, it.sortMode),
-                    activeSheet = null,
+                    products = applySorting(updatedProducts, it.sortMode)
                 )
             }
         }
@@ -136,6 +134,15 @@ class ListDetailViewModel @Inject constructor() :
                 activeSheet = null,
                 isSortSubmenuVisible = false,
                 editingProduct = null,
+            )
+        }
+    }
+
+    fun dismissAddEditSheetAfterSave() {
+        _state.update {
+            it.copy(
+                activeSheet = null,
+                editingProduct = null
             )
         }
     }

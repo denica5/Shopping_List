@@ -11,7 +11,7 @@ import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import androidx.savedstate.serialization.SavedStateConfiguration
 import com.example.shoppinglist.core.presentation.adaptive.TabletListsAndDetailsLayout
-import com.example.shoppinglist.features.listDetailScreen.presentation.ui.ListDetailScreen
+import com.example.shoppinglist.features.listDetailScreen.presentation.ListDetailScreen
 import com.example.shoppinglist.features.auth.presentation.LoginScreen
 import com.example.shoppinglist.features.auth.presentation.PasswordRecoveryScreen
 import com.example.shoppinglist.features.auth.presentation.RegisterScreen
@@ -33,7 +33,7 @@ fun NavigationRoot(modifier: Modifier = Modifier) {
                 }
             }
         },
-        Route.ListDetailScreen("Продукты")
+        Route.LoginScreen
     )
 
     NavDisplay(

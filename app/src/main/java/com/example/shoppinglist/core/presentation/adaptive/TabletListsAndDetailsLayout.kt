@@ -30,7 +30,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.shoppinglist.R
 import com.example.shoppinglist.features.listDetailScreen.presentation.ListDetailScreen
-import com.example.shoppinglist.features.listDetailScreen.presentation.components.ProductsAppBar
+import com.example.shoppinglist.features.listDetailScreen.presentation.ui.components.ProductsAppBar
 import com.example.shoppinglist.features.productLists.presentation.ProductListsScreen
 
 @Composable
