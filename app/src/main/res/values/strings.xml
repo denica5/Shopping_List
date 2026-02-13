@@ -35,4 +35,25 @@
     <string name="dialog_preview_list_name" translatable="false">Продукты</string>
     <string name="dialog_delete_list_title" translatable="false">Удалить список «%1$s»?</string>
     <string name="dialog_delete_all_lists" translatable="false">Удалить все списки?</string>
+
+    <string name="products_empty_title" translatable="false">В списке покупок пока пусто</string>
+    <string name="products_empty_subtitle" translatable="false">Нажмите на кнопку + ниже,\nчтобы добавить товары</string>
+    <string name="product_quantity_label" translatable="false">Количество</string>
+    <string name="product_unit_label" translatable="false">Единицы</string>
+    <string name="product_unit_placeholder" translatable="false">Единицы измерения</string>
+    <string name="product_sort" translatable="false">Сортировка</string>
+    <string name="product_sort_alphabetical" translatable="false">По алфавиту</string>
+    <string name="product_sort_custom" translatable="false">Пользовательская</string>
+    <string name="product_delete_all" translatable="false">Удалить все</string>
+    <string name="product_clear_purchased" translatable="false">Очистить купленные</string>
+    <string name="dialog_delete_all_products" translatable="false">Удалить все товары?</string>
+    <string name="dialog_clear_purchased_products" translatable="false">Удалить\nвсе купленные\nтовары?</string>
+
+    <string name="unit_l" translatable="false">л</string>
+    <string name="unit_ml" translatable="false">мл</string>
+    <string name="unit_pack" translatable="false">уп</string>
+    <string name="unit_pach" translatable="false">пач</string>
+    <string name="unit_pcs" translatable="false">шт</string>
+    <string name="unit_kg" translatable="false">кг</string>
+    <string name="unit_g" translatable="false">г</string>
 </resources>

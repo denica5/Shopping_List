@@ -95,7 +95,7 @@ fun ProductListsScreen(
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     items(state.productLists) { list: ProductList ->
-                        ListCard(list, viewModel, swipeController)
+                        ListCard(list, viewModel, swipeController, onItemClick)
                     }
                 }
             }

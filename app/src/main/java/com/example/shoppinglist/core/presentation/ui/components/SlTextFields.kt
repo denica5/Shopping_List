@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.shoppinglist.core.theme.ShoppingListTheme
 
@@ -60,8 +61,20 @@ object SlTextFields {
         textStyle: TextStyle = MaterialTheme.typography.bodyLarge,
         colors: SlTextFieldColors = SlTextFieldDefaults.colors(),
     ) {
-        fun filter(input: String): String =
-            input.filter { it.isDigit() || it == '.' }.take(10)
+        fun filter(input: String): String {
+            val digitsAndDots = input.filter { it.isDigit() || it == '.' }
+            val dotIndex = digitsAndDots.indexOf('.')
+            val result = if (dotIndex == -1) {
+                digitsAndDots
+            } else {
+                val beforeDot = digitsAndDots.take(dotIndex + 1)
+                val afterDot = digitsAndDots.substring(dotIndex + 1).filter { it.isDigit() }
+                beforeDot + afterDot
+            }
+            val prefixed = if (result.startsWith(".")) "0$result" else result
+            return prefixed.take(10)
+        }
+
 
         val safeValue = filter(value)
         val numberKeyboard = KeyboardOptions.Default.copy(
@@ -102,8 +115,9 @@ object SlTextFields {
         borderColor: Color = MaterialTheme.colorScheme.outline,
         keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     ) {
-        Column(modifier = modifier) {
+        Column {
             OutlinedTextField(
+                modifier = modifier,
                 value = value,
                 onValueChange = onValueChange,
                 singleLine = singleLine,
@@ -113,8 +127,8 @@ object SlTextFields {
                     {
                         Text(
                             text = labelText,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = labelColor,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
                             modifier = if (labelBackgroundColor != Color.Unspecified) {
                                 Modifier.background(labelBackgroundColor)
                             } else {
@@ -131,6 +145,8 @@ object SlTextFields {
                             text = text,
                             style = MaterialTheme.typography.bodyLarge,
                             color = textColor.copy(alpha = 0.6f),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
                         )
                     }
                 },
@@ -203,5 +219,3 @@ private fun SlNumberFieldPreview() {
         }
     }
 }
-
-

@@ -37,7 +37,8 @@ import com.example.shoppinglist.features.productLists.presentation.model.Product
 fun ListCard(
     list: ProductList,
     viewModel: ProductListsViewModel,
-    controller: SwipeCardController
+    controller: SwipeCardController,
+    onItemClick: (String) -> Unit
 ) {
     SwipeContainer(
         id = list.id,
@@ -70,6 +71,7 @@ fun ListCard(
         },
         content = {
             Card(
+                onClick = { onItemClick(list.name) },
                 colors = CardDefaults.cardColors(
                     contentColor = MaterialTheme.colorScheme.surface,
                     containerColor = MaterialTheme.colorScheme.surface,
