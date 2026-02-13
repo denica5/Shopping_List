@@ -1,4 +1,4 @@
-package com.example.shoppinglist.features.listDetailScreen.presentation
+package com.example.shoppinglist.features.listDetailScreen.presentation.ui
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
@@ -30,7 +30,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.shoppinglist.R
 import com.example.shoppinglist.core.presentation.ui.components.SlButtons
@@ -38,14 +38,15 @@ import com.example.shoppinglist.core.presentation.ui.components.SlDialogs
 import com.example.shoppinglist.core.presentation.ui.components.SlElevatedButton
 import com.example.shoppinglist.core.presentation.ui.components.SwipeCardController
 import com.example.shoppinglist.core.theme.ShoppingListTheme
-import com.example.shoppinglist.features.listDetailScreen.presentation.components.AddEditProductSheet
-import com.example.shoppinglist.features.listDetailScreen.presentation.components.EmptyProductsContent
-import com.example.shoppinglist.features.listDetailScreen.presentation.components.MenuContent
-import com.example.shoppinglist.features.listDetailScreen.presentation.components.ProductItem
-import com.example.shoppinglist.features.listDetailScreen.presentation.components.ProductsAppBar
 import com.example.shoppinglist.features.listDetailScreen.presentation.model.ListDetailAction
 import com.example.shoppinglist.features.listDetailScreen.presentation.model.ListDetailEvent
 import com.example.shoppinglist.features.listDetailScreen.presentation.model.SortMode
+import com.example.shoppinglist.features.listDetailScreen.presentation.ui.components.AddEditProductSheet
+import com.example.shoppinglist.features.listDetailScreen.presentation.ui.components.EmptyProductsContent
+import com.example.shoppinglist.features.listDetailScreen.presentation.ui.components.MenuContent
+import com.example.shoppinglist.features.listDetailScreen.presentation.ui.components.ProductItem
+import com.example.shoppinglist.features.listDetailScreen.presentation.ui.components.ProductsAppBar
+import com.example.shoppinglist.features.listDetailScreen.presentation.viewmodel.ListDetailViewModel
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 

@@ -9,7 +9,7 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import androidx.savedstate.serialization.SavedStateConfiguration
-import com.example.shoppinglist.features.listDetailScreen.presentation.ListDetailScreen
+import com.example.shoppinglist.features.listDetailScreen.presentation.ui.ListDetailScreen
 import com.example.shoppinglist.features.auth.presentation.LoginScreen
 import com.example.shoppinglist.features.auth.presentation.PasswordRecoveryScreen
 import com.example.shoppinglist.features.auth.presentation.RegisterScreen
@@ -26,10 +26,12 @@ fun NavigationRoot(modifier: Modifier = Modifier) {
                     subclass(Route.ProductLists::class, Route.ProductLists.serializer())
                     subclass(Route.ListDetailScreen::class, Route.ListDetailScreen.serializer())
                     subclass(Route.LoginScreen::class, Route.LoginScreen.serializer())
+                    subclass(Route.RegisterScreen::class, Route.RegisterScreen.serializer())
+                    subclass(Route.PasswordRecoveryScreen::class, Route.PasswordRecoveryScreen.serializer())
                 }
             }
         },
-        Route.LoginScreen
+        Route.ListDetailScreen("Продукты")
     )
 
     NavDisplay(
