@@ -3,7 +3,7 @@ package com.example.shoppinglist.features.listDetailScreen.presentation.model
 sealed interface ListDetailEvent {
     object AddProductClick : ListDetailEvent
     object SaveProductClick : ListDetailEvent
-    object DismissAddEditSheet : ListDetailEvent
+    object DismissSheet : ListDetailEvent
     data class EditProductClick(val product: Product_tmp) : ListDetailEvent
     data class InputNameChanged(val name: String) : ListDetailEvent
     data class InputQuantityChanged(val quantity: String) : ListDetailEvent
@@ -16,7 +16,6 @@ sealed interface ListDetailEvent {
     data class MoveProduct(val fromIndex: Int, val toIndex: Int) : ListDetailEvent
 
     object MenuClick : ListDetailEvent
-    object DismissMenuSheet : ListDetailEvent
     object ToggleSortSubmenu : ListDetailEvent
     data class SetSortMode(val sortMode: SortMode) : ListDetailEvent
     object DeleteAllClick : ListDetailEvent

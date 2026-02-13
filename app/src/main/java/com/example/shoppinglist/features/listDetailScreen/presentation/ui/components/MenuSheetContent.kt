@@ -12,15 +12,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,38 +28,8 @@ import com.example.shoppinglist.R
 import com.example.shoppinglist.core.theme.AppColors
 import com.example.shoppinglist.features.listDetailScreen.presentation.model.SortMode
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MenuBottomSheet(
-    currentSortMode: SortMode,
-    isSortSubmenuVisible: Boolean,
-    onSortClick: () -> Unit,
-    onSortModeSelected: (SortMode) -> Unit,
-    onDeleteAllClick: () -> Unit,
-    onClearPurchasedClick: () -> Unit,
-    onDismiss: () -> Unit,
-) {
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-
-    ModalBottomSheet(
-        onDismissRequest = onDismiss,
-        sheetState = sheetState,
-        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-        tonalElevation = 0.dp,
-    ) {
-        MenuContent(
-            currentSortMode = currentSortMode,
-            isSortSubmenuVisible = isSortSubmenuVisible,
-            onSortClick = onSortClick,
-            onSortModeSelected = onSortModeSelected,
-            onDeleteAllClick = onDeleteAllClick,
-            onClearPurchasedClick = onClearPurchasedClick,
-        )
-    }
-}
-
-@Composable
-fun MenuContent(
+fun MenuSheetContent(
     currentSortMode: SortMode,
     isSortSubmenuVisible: Boolean,
     onSortClick: () -> Unit,

@@ -4,8 +4,7 @@ package com.example.shoppinglist.features.listDetailScreen.presentation.model
 data class ListDetailState(
     val products: List<Product_tmp> = emptyList(),
     val sortMode: SortMode = SortMode.ALPHABETICAL,
-    val isAddEditSheetVisible: Boolean = false,
-    val isMenuSheetVisible: Boolean = false,
+    val activeSheet: ListDetailSheet? = null,
     val isSortSubmenuVisible: Boolean = false,
     val isDeleteAllDialogVisible: Boolean = false,
     val isClearPurchasedDialogVisible: Boolean = false,

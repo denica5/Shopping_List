@@ -1,12 +1,16 @@
-package com.example.shoppinglist.features.listDetailScreen.presentation.ui.components
+package com.example.shoppinglist.features.listDetailScreen.presentation.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -14,15 +18,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,7 +35,6 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -42,61 +42,34 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.shoppinglist.R
 import com.example.shoppinglist.core.presentation.ui.components.SlButtons
-import com.example.shoppinglist.core.presentation.ui.components.SlElevatedButton
 import com.example.shoppinglist.core.presentation.ui.components.SlIcon
 import com.example.shoppinglist.core.presentation.ui.components.SlTextFieldDefaults
 import com.example.shoppinglist.core.presentation.ui.components.SlTextFields
 import com.example.shoppinglist.features.listDetailScreen.presentation.model.ListDetailState
 import com.example.shoppinglist.features.listDetailScreen.presentation.model.ProductUnit
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddEditProductSheet(
+fun AddEditSheetContent(
     state: ListDetailState,
     onNameChanged: (String) -> Unit,
     onQuantityChanged: (String) -> Unit,
     onUnitChanged: (ProductUnit) -> Unit,
     onIncrement: () -> Unit,
     onDecrement: () -> Unit,
-    onSave: () -> Unit,
-    onDismiss: () -> Unit,
 ) {
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-
-    ModalBottomSheet(
-        onDismissRequest = onDismiss,
-        sheetState = sheetState,
-        containerColor = Color.Transparent,
-        shape = RectangleShape,
-        dragHandle = null,
+    Surface(
+        shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
+        color = MaterialTheme.colorScheme.surfaceContainerLow,
         tonalElevation = 0.dp,
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(end = 24.dp, bottom = 12.dp),
-            contentAlignment = Alignment.CenterEnd,
-        ) {
-            SlButtons.SlElevatedButton(
-                onClick = onSave,
-                iconPainter = painterResource(id = R.drawable.check),
-            )
-        }
-
-        Surface(
-            shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
-            color = MaterialTheme.colorScheme.surfaceContainerLow,
-            tonalElevation = 0.dp,
-        ) {
-            AddEditProductContent(
-                state = state,
-                onNameChanged = onNameChanged,
-                onQuantityChanged = onQuantityChanged,
-                onUnitChanged = onUnitChanged,
-                onIncrement = onIncrement,
-                onDecrement = onDecrement,
-            )
-        }
+        AddEditProductContent(
+            state = state,
+            onNameChanged = onNameChanged,
+            onQuantityChanged = onQuantityChanged,
+            onUnitChanged = onUnitChanged,
+            onIncrement = onIncrement,
+            onDecrement = onDecrement,
+        )
     }
 }
 
@@ -113,18 +86,22 @@ private fun AddEditProductContent(
     val canDecrement = (state.inputQuantity.toDoubleOrNull() ?: 0.0) > 0.0
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
+    val navBarBottomPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+    // переписал боттом шиты на BottomSheetScaffold, начались траблы с клавиатурой, только такой костыль получилось придумать
+    val imeBottomPadding = WindowInsets.ime.asPaddingValues().calculateBottomPadding() / 2
+    val bottomInsetPadding = maxOf(navBarBottomPadding, imeBottomPadding)
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 24.dp)
-            .padding(top = 24.dp, bottom = 24.dp),
+            .padding(top = 24.dp, bottom = 24.dp + bottomInsetPadding),
     ) {
         val sheetLabelColors = SlTextFieldDefaults.colors(
             labelBackgroundColor = MaterialTheme.colorScheme.surfaceContainerLow,
         )
 
-        // Название продукта
+        // ввод названия продукта
         SlTextFields.SlInputTextField(
             value = state.inputName,
             onValueChange = onNameChanged,
@@ -140,7 +117,7 @@ private fun AddEditProductContent(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            // Количество
+            // ввод количества продукта
             SlTextFields.SlInputNumberField(
                 value = state.inputQuantity,
                 onValueChange = onQuantityChanged,
@@ -152,8 +129,8 @@ private fun AddEditProductContent(
 
             Spacer(Modifier.width(8.dp))
 
-            // Единицы измерения
             Box {
+                // выбор единиц измерения продукта
                 OutlinedTextField(
                     value = state.inputUnit?.label ?: "",
                     onValueChange = {},
@@ -233,7 +210,7 @@ private fun AddEditProductContent(
 
             Spacer(Modifier.width(8.dp))
 
-            // Минус
+            // кнопка минус
             SlButtons.SlIcon(
                 onClick = onDecrement,
                 painter = painterResource(R.drawable.minus),
@@ -246,7 +223,7 @@ private fun AddEditProductContent(
 
             Spacer(Modifier.width(4.dp))
 
-            // Плюс
+            // кнопка плюс
             SlButtons.SlIcon(
                 onClick = onIncrement,
                 painter = painterResource(R.drawable.plus),

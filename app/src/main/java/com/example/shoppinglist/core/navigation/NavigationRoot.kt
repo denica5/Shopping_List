@@ -2,6 +2,7 @@ package com.example.shoppinglist.core.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
@@ -9,7 +10,8 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import androidx.savedstate.serialization.SavedStateConfiguration
-import com.example.shoppinglist.features.listDetailScreen.presentation.ui.ListDetailScreen
+import com.example.shoppinglist.core.presentation.adaptive.TabletListsAndDetailsLayout
+import com.example.shoppinglist.features.listDetailScreen.presentation.ListDetailScreen
 import com.example.shoppinglist.features.auth.presentation.LoginScreen
 import com.example.shoppinglist.features.auth.presentation.PasswordRecoveryScreen
 import com.example.shoppinglist.features.auth.presentation.RegisterScreen
@@ -31,7 +33,7 @@ fun NavigationRoot(modifier: Modifier = Modifier) {
                 }
             }
         },
-        Route.ListDetailScreen("Продукты")
+        Route.LoginScreen
     )
 
     NavDisplay(
@@ -45,12 +47,16 @@ fun NavigationRoot(modifier: Modifier = Modifier) {
             when (key) {
                 is Route.ProductLists -> {
                     NavEntry(key) {
-                        ProductListsScreen(
-                            onItemClick =
-                                {
-                                    backStack.add(Route.ListDetailScreen(it))
-                                }
-                        )
+                        if (isTabletMode()) {
+                            TabletListsAndDetailsLayout()
+                        } else {
+                            ProductListsScreen(
+                                onItemClick =
+                                    {
+                                        backStack.add(Route.ListDetailScreen(it))
+                                    }
+                            )
+                        }
                     }
                 }
 
@@ -101,4 +107,10 @@ fun NavigationRoot(modifier: Modifier = Modifier) {
             }
         }
     )
+}
+
+@Composable
+private fun isTabletMode(): Boolean {
+    val configuration = LocalConfiguration.current
+    return configuration.screenWidthDp >= 840
 }
