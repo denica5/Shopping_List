@@ -10,6 +10,7 @@ plugins {
     id("com.google.dagger.hilt.android")
     id("com.google.devtools.ksp")
     id("io.gitlab.arturbosch.detekt")
+    id("com.google.gms.google-services")
 }
 
 val keystorePropertiesFile = rootProject.file("keystore.properties")
@@ -116,6 +117,11 @@ dependencies {
     implementation(libs.ktor.client.content.negotiation)
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.ktor.client.auth)
+    //firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.auth)
+    implementation(libs.kotlinx.coroutines.play.services)
+    implementation(libs.firebase.analytics)
 
     implementation(libs.reorderable)
 

@@ -1,4 +1,4 @@
-package com.example.shoppinglist.features.login.presentation
+package com.example.shoppinglist.features.auth.presentation
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -30,14 +30,9 @@ import com.example.shoppinglist.core.presentation.ui.components.SlTextFields
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RegisterScreen(onRegisterClick: () -> Unit, onBackArrowClick: () -> Unit) {
+fun PasswordRecoveryScreen(onPasswordRecoveryClick: () -> Unit, onBackArrowClick: () -> Unit) {
 
     var rememberEmailText by remember { mutableStateOf("") }
-    var rememberPasswordText by remember { mutableStateOf("") }
-    var rememberPasswordCheckText by remember { mutableStateOf("") }
-
-
-
 
     Scaffold(
         topBar = {
@@ -62,7 +57,7 @@ fun RegisterScreen(onRegisterClick: () -> Unit, onBackArrowClick: () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Регистрация",
+                text = "Восстановление пароля",
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onPrimaryContainer
             )
@@ -74,33 +69,19 @@ fun RegisterScreen(onRegisterClick: () -> Unit, onBackArrowClick: () -> Unit) {
 
                 )
             Spacer(Modifier.size(12.dp))
-            SlTextFields.SlInputTextField(
-                value = rememberPasswordText,
-                onValueChange = { rememberPasswordText = it },
-                labelText = "Пароль"
-            )
-            Spacer(Modifier.size(12.dp))
-            SlTextFields.SlInputTextField(
-                value = rememberPasswordCheckText,
-                onValueChange = { rememberPasswordCheckText = it },
-                labelText = "Повторите пароль"
-            )
-            Spacer(Modifier.size(12.dp))
             SlButtons.SLTextButton(
-                text = "Создать аккаунт",
-                onClick = onRegisterClick,
+                text = "Восстановить пароль",
+                onClick = { },
                 textStyle = MaterialTheme.typography.bodyMedium,
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
                 shape = RoundedCornerShape(4.0.dp)
             )
-
         }
     }
-
 }
 
 @Preview
 @Composable
-fun PreviewRegisterScreen() {
-    RegisterScreen(onRegisterClick = {}, onBackArrowClick = {})
+fun PreviewPasswordRecoveryScreen() {
+    PasswordRecoveryScreen({}) { }
 }
