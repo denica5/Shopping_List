@@ -54,7 +54,10 @@ fun NavigationRoot(modifier: Modifier = Modifier) {
 
                 is Route.ListDetailScreen -> {
                     NavEntry(key) {
-                        ListDetailScreen(key.todo)
+                        ListDetailScreen(
+                            listName = key.todo,
+                            onBackClick = { backStack.removeLastOrNull() },
+                        )
                     }
                 }
 
@@ -94,7 +97,6 @@ fun NavigationRoot(modifier: Modifier = Modifier) {
                     error("Unknown NavKey: $key")
                 }
             }
-
         }
     )
 }

@@ -1,7 +1,6 @@
 package com.example.shoppinglist.core.presentation.ui.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
@@ -14,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.shoppinglist.core.theme.ShoppingListTheme
 
@@ -62,18 +62,18 @@ object SlTextFields {
     ) {
         fun filter(input: String): String {
             val digitsAndDots = input.filter { it.isDigit() || it == '.' }
-            val dotIndex = digitsAndDots.indexOf('.')
-            val result = if (dotIndex == -1) {
+            val firstDotIndex = digitsAndDots.indexOf('.')
+            val normalized = if (firstDotIndex == -1) {
                 digitsAndDots
             } else {
-                val beforeDot = digitsAndDots.take(dotIndex + 1)
-                val afterDot = digitsAndDots.substring(dotIndex + 1).filter { it.isDigit() }
+                val beforeDot = digitsAndDots.substring(0, firstDotIndex + 1)
+                val afterDot = digitsAndDots
+                    .substring(firstDotIndex + 1)
+                    .replace(".", "")
                 beforeDot + afterDot
             }
-            val prefixed = if (result.startsWith(".")) "0$result" else result
-            return prefixed.take(10)
+            return normalized.take(10)
         }
-
 
         val safeValue = filter(value)
         val numberKeyboard = KeyboardOptions.Default.copy(
@@ -114,53 +114,53 @@ object SlTextFields {
         borderColor: Color = MaterialTheme.colorScheme.outline,
         keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     ) {
-        Column {
-            OutlinedTextField(
-                modifier = modifier,
-                value = value,
-                onValueChange = onValueChange,
-                singleLine = singleLine,
-                enabled = true,
-                textStyle = textStyle,
-                label = if (labelText.isNotEmpty()) {
-                    {
-                        Text(
-                            text = labelText,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = labelColor,
-                            modifier = if (labelBackgroundColor != Color.Unspecified) {
-                                Modifier.background(labelBackgroundColor)
-                            } else {
-                                Modifier
-                            },
-                        )
-                    }
-                } else {
-                    null
-                },
-                placeholder = placeholder?.let { text ->
-                    {
-                        Text(
-                            text = text,
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = textColor.copy(alpha = 0.6f),
-                        )
-                    }
-                },
-                keyboardOptions = keyboardOptions,
-                keyboardActions = KeyboardActions.Default,
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = textColor,
-                    unfocusedTextColor = textColor,
-                    focusedContainerColor = containerColor,
-                    unfocusedContainerColor = containerColor,
-                    focusedLabelColor = MaterialTheme.colorScheme.primary,
-                    unfocusedLabelColor = labelColor,
-                    focusedBorderColor = MaterialTheme.colorScheme.primary,
-                    unfocusedBorderColor = borderColor,
-                )
+        OutlinedTextField(
+            modifier = modifier,
+            value = value,
+            onValueChange = onValueChange,
+            singleLine = singleLine,
+            enabled = true,
+            textStyle = textStyle,
+            label = if (labelText.isNotEmpty()) {
+                {
+                    Text(
+                        text = labelText,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = if (labelBackgroundColor != Color.Unspecified) {
+                            Modifier.background(labelBackgroundColor)
+                        } else {
+                            Modifier
+                        },
+                    )
+                }
+            } else {
+                null
+            },
+            placeholder = placeholder?.let { text ->
+                {
+                    Text(
+                        text = text,
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = textColor.copy(alpha = 0.6f),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
+            },
+            keyboardOptions = keyboardOptions,
+            keyboardActions = KeyboardActions.Default,
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedTextColor = textColor,
+                unfocusedTextColor = textColor,
+                focusedContainerColor = containerColor,
+                unfocusedContainerColor = containerColor,
+                focusedLabelColor = MaterialTheme.colorScheme.primary,
+                unfocusedLabelColor = labelColor,
+                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor = borderColor,
             )
-        }
+        )
     }
 }
 
@@ -216,5 +216,3 @@ private fun SlNumberFieldPreview() {
         }
     }
 }
-
-

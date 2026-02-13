@@ -34,10 +34,12 @@ import com.example.shoppinglist.features.productLists.presentation.ProductListsV
 import com.example.shoppinglist.features.productLists.presentation.model.ProductListsEvent
 
 @Composable
-fun ListCard(list: ProductList, viewModel: ProductListsViewModel) {
-    val controller = SwipeCardController()
-    controller.activeCardId = list.id
-
+fun ListCard(
+    list: ProductList,
+    viewModel: ProductListsViewModel,
+    controller: SwipeCardController,
+    onItemClick: (String) -> Unit
+) {
     SwipeContainer(
         id = list.id,
         maxOffset = 350.dp,
@@ -69,6 +71,7 @@ fun ListCard(list: ProductList, viewModel: ProductListsViewModel) {
         },
         content = {
             Card(
+                onClick = { onItemClick(list.name) },
                 colors = CardDefaults.cardColors(
                     contentColor = MaterialTheme.colorScheme.surface,
                     containerColor = MaterialTheme.colorScheme.surface,
