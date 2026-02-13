@@ -3,6 +3,7 @@ package com.example.shoppinglist.features.listDetailScreen.presentation
 import com.example.shoppinglist.core.presentation.viewmodel.BaseViewModel
 import com.example.shoppinglist.features.listDetailScreen.presentation.model.ListDetailAction
 import com.example.shoppinglist.features.listDetailScreen.presentation.model.ListDetailEvent
+import com.example.shoppinglist.features.listDetailScreen.presentation.model.ListDetailSheet
 import com.example.shoppinglist.features.listDetailScreen.presentation.model.ListDetailState
 import com.example.shoppinglist.features.listDetailScreen.presentation.model.Product_tmp
 import com.example.shoppinglist.features.listDetailScreen.presentation.model.ProductUnit
@@ -28,7 +29,7 @@ class ListDetailViewModel @Inject constructor() :
             is ListDetailEvent.AddProductClick -> openAddSheet()
             is ListDetailEvent.EditProductClick -> openEditSheet(event.product)
             is ListDetailEvent.SaveProductClick -> saveProduct()
-            is ListDetailEvent.DismissAddEditSheet -> dismissAddEditSheet()
+            is ListDetailEvent.DismissSheet -> dismissSheet()
             is ListDetailEvent.InputNameChanged -> updateInputName(event.name)
             is ListDetailEvent.InputQuantityChanged -> updateInputQuantity(event.quantity)
             is ListDetailEvent.InputUnitChanged -> updateInputUnit(event.unit)
@@ -38,7 +39,6 @@ class ListDetailViewModel @Inject constructor() :
             is ListDetailEvent.DeleteProduct -> deleteProduct(event.product)
             is ListDetailEvent.MoveProduct -> moveProduct(event.fromIndex, event.toIndex)
             is ListDetailEvent.MenuClick -> toggleMenu()
-            is ListDetailEvent.DismissMenuSheet -> dismissMenu()
             is ListDetailEvent.ToggleSortSubmenu -> toggleSortSubmenu()
             is ListDetailEvent.SetSortMode -> setSortMode(event.sortMode)
             is ListDetailEvent.DeleteAllClick -> showDeleteAllDialog()
@@ -60,7 +60,8 @@ class ListDetailViewModel @Inject constructor() :
     private fun openAddSheet() {
         _state.update {
             it.copy(
-                isAddEditSheetVisible = true,
+                activeSheet = ListDetailSheet.AddEdit,
+                isSortSubmenuVisible = false,
                 editingProduct = null,
                 inputName = "",
                 inputQuantity = "",
@@ -72,7 +73,8 @@ class ListDetailViewModel @Inject constructor() :
     private fun openEditSheet(product: Product_tmp) {
         _state.update {
             it.copy(
-                isAddEditSheetVisible = true,
+                activeSheet = ListDetailSheet.AddEdit,
+                isSortSubmenuVisible = false,
                 editingProduct = product,
                 inputName = product.name,
                 inputQuantity = formatQuantity(product.quantity),
@@ -106,7 +108,7 @@ class ListDetailViewModel @Inject constructor() :
             _state.update {
                 it.copy(
                     products = applySorting(updatedProducts, it.sortMode),
-                    isAddEditSheetVisible = false,
+                    activeSheet = null,
                     editingProduct = null,
                 )
             }
@@ -122,16 +124,17 @@ class ListDetailViewModel @Inject constructor() :
             _state.update {
                 it.copy(
                     products = applySorting(updatedProducts, it.sortMode),
-                    isAddEditSheetVisible = false,
+                    activeSheet = null,
                 )
             }
         }
     }
 
-    private fun dismissAddEditSheet() {
+    private fun dismissSheet() {
         _state.update {
             it.copy(
-                isAddEditSheetVisible = false,
+                activeSheet = null,
+                isSortSubmenuVisible = false,
                 editingProduct = null,
             )
         }
@@ -198,7 +201,7 @@ class ListDetailViewModel @Inject constructor() :
     private fun showMenu() {
         _state.update {
             it.copy(
-                isMenuSheetVisible = true,
+                activeSheet = ListDetailSheet.Menu,
                 isSortSubmenuVisible = false,
             )
         }
@@ -207,14 +210,14 @@ class ListDetailViewModel @Inject constructor() :
     private fun dismissMenu() {
         _state.update {
             it.copy(
-                isMenuSheetVisible = false,
+                activeSheet = null,
                 isSortSubmenuVisible = false,
             )
         }
     }
 
     private fun toggleMenu() {
-        if (_state.value.isMenuSheetVisible) {
+        if (_state.value.activeSheet == ListDetailSheet.Menu) {
             dismissMenu()
         } else {
             showMenu()
@@ -232,7 +235,7 @@ class ListDetailViewModel @Inject constructor() :
                 sortMode = sortMode,
                 products = applySorting(state.products, sortMode),
                 isSortSubmenuVisible = false,
-                isMenuSheetVisible = false,
+                activeSheet = null,
             )
         }
     }
@@ -241,7 +244,7 @@ class ListDetailViewModel @Inject constructor() :
         _state.update {
             it.copy(
                 isDeleteAllDialogVisible = true,
-                isMenuSheetVisible = false,
+                activeSheet = null,
             )
         }
     }
@@ -264,7 +267,7 @@ class ListDetailViewModel @Inject constructor() :
         _state.update {
             it.copy(
                 isClearPurchasedDialogVisible = true,
-                isMenuSheetVisible = false,
+                activeSheet = null,
             )
         }
     }

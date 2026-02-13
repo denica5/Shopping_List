@@ -15,6 +15,8 @@ import com.example.shoppinglist.R
 @Composable
 fun ProductsAppBar(
     title: String,
+    showBackButton: Boolean = true,
+    showMenuButton: Boolean = true,
     onBackClick: () -> Unit,
     onMenuClick: () -> Unit,
 ) {
@@ -26,22 +28,28 @@ fun ProductsAppBar(
                 style = MaterialTheme.typography.titleLarge,
             )
         },
-        navigationIcon = {
-            IconButton(onClick = onBackClick) {
-                Icon(
-                    painter = painterResource(R.drawable.arrow_back),
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
+        navigationIcon = if (showBackButton) {
+            {
+                IconButton(onClick = onBackClick) {
+                    Icon(
+                        painter = painterResource(R.drawable.arrow_back),
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
             }
+        } else {
+            {}
         },
         actions = {
-            IconButton(onClick = onMenuClick) {
-                Icon(
-                    painter = painterResource(R.drawable.dots),
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
+            if (showMenuButton) {
+                IconButton(onClick = onMenuClick) {
+                    Icon(
+                        painter = painterResource(R.drawable.dots),
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
             }
         },
         colors = TopAppBarDefaults.topAppBarColors(

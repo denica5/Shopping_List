@@ -1,6 +1,7 @@
 package com.example.shoppinglist.features.listDetailScreen.presentation.components
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,9 +26,8 @@ fun EmptyProductsContent() {
             .fillMaxSize()
             .padding(horizontal = 44.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
     ) {
-        Spacer(Modifier.height(80.dp))
-
         Image(
             modifier = Modifier.fillMaxWidth(),
             painter = painterResource(id = R.drawable.illustration_product_list),

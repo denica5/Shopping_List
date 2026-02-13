@@ -20,4 +20,8 @@ object AppDimens {
     val DialogPillButtonsSpacing = 16.dp
     val DialogShadowElevation = 3.dp
     val DialogTonalElevation = 0.dp
+    val Zero = 0.dp
+    val ListDetailMenuSheetPeekHeight = 28.dp
+    val ListDetailAddEditActionEndPadding = 24.dp
+    val ListDetailAddEditActionBottomPadding = 12.dp
 }

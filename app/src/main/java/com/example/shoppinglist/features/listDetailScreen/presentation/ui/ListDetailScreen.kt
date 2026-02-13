@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -28,23 +29,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.shoppinglist.R
 import com.example.shoppinglist.core.presentation.ui.components.SlButtons
 import com.example.shoppinglist.core.presentation.ui.components.SlDialogs
 import com.example.shoppinglist.core.presentation.ui.components.SlElevatedButton
 import com.example.shoppinglist.core.presentation.ui.components.SwipeCardController
+import com.example.shoppinglist.core.theme.AppDimens
 import com.example.shoppinglist.core.theme.ShoppingListTheme
-import com.example.shoppinglist.features.listDetailScreen.presentation.components.AddEditProductSheet
+import com.example.shoppinglist.features.listDetailScreen.presentation.components.AddEditSheetContent
 import com.example.shoppinglist.features.listDetailScreen.presentation.components.EmptyProductsContent
-import com.example.shoppinglist.features.listDetailScreen.presentation.components.MenuContent
+import com.example.shoppinglist.features.listDetailScreen.presentation.components.MenuSheetContent
 import com.example.shoppinglist.features.listDetailScreen.presentation.components.ProductItem
 import com.example.shoppinglist.features.listDetailScreen.presentation.components.ProductsAppBar
 import com.example.shoppinglist.features.listDetailScreen.presentation.model.ListDetailAction
 import com.example.shoppinglist.features.listDetailScreen.presentation.model.ListDetailEvent
+import com.example.shoppinglist.features.listDetailScreen.presentation.model.ListDetailSheet
 import com.example.shoppinglist.features.listDetailScreen.presentation.model.SortMode
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
@@ -54,6 +57,7 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 fun ListDetailScreen(
     listName: String,
     onBackClick: () -> Unit,
+    showBackButton: Boolean = true,
     viewModel: ListDetailViewModel = hiltViewModel(),
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle().value
@@ -79,7 +83,6 @@ fun ListDetailScreen(
             Color.Transparent
         },
         animationSpec = tween(durationMillis = 300),
-        label = "sheetContainerColor",
     )
 
     LaunchedEffect(action) {
@@ -92,8 +95,8 @@ fun ListDetailScreen(
         }
     }
 
-    LaunchedEffect(state.isMenuSheetVisible) {
-        if (state.isMenuSheetVisible) {
+    LaunchedEffect(state.activeSheet) {
+        if (state.activeSheet != null) {
             bottomSheetState.expand()
         } else {
             bottomSheetState.partialExpand()
@@ -104,7 +107,7 @@ fun ListDetailScreen(
         snapshotFlow { bottomSheetState.currentValue }
             .collect { sheetValue ->
                 if (sheetValue == SheetValue.PartiallyExpanded) {
-                    viewModel.obtainEvent(ListDetailEvent.DismissMenuSheet)
+                    viewModel.obtainEvent(ListDetailEvent.DismissSheet)
                 }
             }
     }
@@ -117,14 +120,44 @@ fun ListDetailScreen(
             topBar = {
                 ProductsAppBar(
                     title = listName,
+                    showBackButton = showBackButton,
+                    showMenuButton = state.products.isNotEmpty(),
                     onBackClick = { viewModel.obtainEvent(ListDetailEvent.BackClick) },
                     onMenuClick = { viewModel.obtainEvent(ListDetailEvent.MenuClick) },
                 )
             },
             sheetContent = {
                 // без этой проверки просвечивал сквозь блок системных кнопок при пустом списке
-                if (state.products.isNotEmpty()) {
-                    MenuContent(
+                if (state.activeSheet == ListDetailSheet.AddEdit) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                end = AppDimens.ListDetailAddEditActionEndPadding,
+                                bottom = AppDimens.ListDetailAddEditActionBottomPadding,
+                            ),
+                        contentAlignment = Alignment.CenterEnd,
+                    ) {
+                        if (!state.inputName.isEmpty()) {
+                            SlButtons.SlElevatedButton(
+                                onClick = { viewModel.obtainEvent(ListDetailEvent.SaveProductClick) },
+                                iconPainter = painterResource(id = R.drawable.check),
+                            )
+                        }
+                    }
+
+                    AddEditSheetContent(
+                        state = state,
+                        onNameChanged = { viewModel.obtainEvent(ListDetailEvent.InputNameChanged(it)) },
+                        onQuantityChanged = {
+                            viewModel.obtainEvent(ListDetailEvent.InputQuantityChanged(it))
+                        },
+                        onUnitChanged = { viewModel.obtainEvent(ListDetailEvent.InputUnitChanged(it)) },
+                        onIncrement = { viewModel.obtainEvent(ListDetailEvent.IncrementQuantity) },
+                        onDecrement = { viewModel.obtainEvent(ListDetailEvent.DecrementQuantity) },
+                    )
+                } else if (state.products.isNotEmpty()) {
+                    MenuSheetContent(
                         currentSortMode = state.sortMode,
                         isSortSubmenuVisible = state.isSortSubmenuVisible,
                         onSortClick = { viewModel.obtainEvent(ListDetailEvent.ToggleSortSubmenu) },
@@ -139,14 +172,22 @@ fun ListDetailScreen(
                 }
             },
             sheetDragHandle = {
-                if (state.products.isNotEmpty()) {
+                if (state.products.isNotEmpty() && state.activeSheet != ListDetailSheet.AddEdit) {
                     BottomSheetDefaults.DragHandle()
                 }
             },
-            sheetPeekHeight = if (state.products.isNotEmpty()) 28.dp + navBarBottom else navBarBottom,
-            sheetContainerColor = sheetColor,
-            sheetShadowElevation = 0.dp,
-            sheetTonalElevation = 0.dp,
+            sheetPeekHeight = if (state.products.isNotEmpty()) {
+                AppDimens.ListDetailMenuSheetPeekHeight + navBarBottom
+            } else {
+                navBarBottom
+            },
+            sheetContainerColor = if (state.activeSheet == ListDetailSheet.AddEdit) {
+                Color.Transparent
+            } else {
+                sheetColor
+            },
+            sheetShadowElevation = AppDimens.Zero,
+            sheetTonalElevation = AppDimens.Zero,
             containerColor = MaterialTheme.colorScheme.background,
         ) { innerPadding ->
             Box(
@@ -200,53 +241,38 @@ fun ListDetailScreen(
                     }
                 }
 
-                if (!state.isAddEditSheetVisible) {
+                if (state.activeSheet != ListDetailSheet.AddEdit) {
                     SlButtons.SlElevatedButton(
                         onClick = { viewModel.obtainEvent(ListDetailEvent.AddProductClick) },
                         iconPainter = painterResource(id = R.drawable.plus),
                         modifier = Modifier
                             .align(Alignment.BottomEnd)
-                            .padding(16.dp),
+                            .padding(AppDimens.PaddingBase),
                     )
                 }
             }
         }
 
-        if (state.isAddEditSheetVisible) {
-            AddEditProductSheet(
-                state = state,
-                onNameChanged = { viewModel.obtainEvent(ListDetailEvent.InputNameChanged(it)) },
-                onQuantityChanged = {
-                    viewModel.obtainEvent(ListDetailEvent.InputQuantityChanged(it))
-                },
-                onUnitChanged = { viewModel.obtainEvent(ListDetailEvent.InputUnitChanged(it)) },
-                onIncrement = { viewModel.obtainEvent(ListDetailEvent.IncrementQuantity) },
-                onDecrement = { viewModel.obtainEvent(ListDetailEvent.DecrementQuantity) },
-                onSave = { viewModel.obtainEvent(ListDetailEvent.SaveProductClick) },
-                onDismiss = { viewModel.obtainEvent(ListDetailEvent.DismissAddEditSheet) },
-            )
-        }
-
         SlDialogs.SlDeleteDialog(
             isShown = state.isDeleteAllDialogVisible,
             icon = ImageVector.vectorResource(R.drawable.attention),
-            title = "Удалить все товары?",
+            title = stringResource(R.string.dialog_delete_all_products),
             onConfirmClick = { viewModel.obtainEvent(ListDetailEvent.ConfirmDeleteAll) },
             onDismissClick = { viewModel.obtainEvent(ListDetailEvent.DismissDeleteAllDialog) },
-            confirmButtonText = "Удалить",
-            dismissButtonText = "Отмена",
+            confirmButtonText = stringResource(R.string.dialog_button_delete),
+            dismissButtonText = stringResource(R.string.dialog_button_cancel),
         )
 
         SlDialogs.SlDeleteDialog(
             isShown = state.isClearPurchasedDialogVisible,
             icon = ImageVector.vectorResource(R.drawable.attention),
-            title = "Удалить\nвсе купленные\nтовары?",
+            title = stringResource(R.string.dialog_clear_purchased_products),
             onConfirmClick = { viewModel.obtainEvent(ListDetailEvent.ConfirmClearPurchased) },
             onDismissClick = {
                 viewModel.obtainEvent(ListDetailEvent.DismissClearPurchasedDialog)
             },
-            confirmButtonText = "Удалить",
-            dismissButtonText = "Отмена",
+            confirmButtonText = stringResource(R.string.dialog_button_delete),
+            dismissButtonText = stringResource(R.string.dialog_button_cancel),
         )
     }
 }
