@@ -26,6 +26,8 @@ fun NavigationRoot(modifier: Modifier = Modifier) {
                     subclass(Route.ProductLists::class, Route.ProductLists.serializer())
                     subclass(Route.ListDetailScreen::class, Route.ListDetailScreen.serializer())
                     subclass(Route.LoginScreen::class, Route.LoginScreen.serializer())
+                    subclass(Route.RegisterScreen::class, Route.RegisterScreen.serializer())
+                    subclass(Route.PasswordRecoveryScreen::class, Route.PasswordRecoveryScreen.serializer())
                 }
             }
         },
