@@ -1,4 +1,4 @@
-package com.example.shoppinglist.features.listDetailScreen.presentation
+package com.example.shoppinglist.features.listDetailScreen.presentation.viewmodel
 
 import com.example.shoppinglist.core.presentation.viewmodel.BaseViewModel
 import com.example.shoppinglist.features.listDetailScreen.presentation.model.ListDetailAction

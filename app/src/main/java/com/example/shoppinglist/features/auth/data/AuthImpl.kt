@@ -1,9 +1,9 @@
-package com.example.shoppinglist.features.login.data
+package com.example.shoppinglist.features.auth.data
 
-import com.example.shoppinglist.features.login.data.dto.CheckTokenDto
-import com.example.shoppinglist.features.login.data.dto.LoginRequestDto
-import com.example.shoppinglist.features.login.data.dto.TokenDto
-import com.example.shoppinglist.features.login.data.dto.UserDto
+import com.example.shoppinglist.features.auth.data.dto.CheckTokenDto
+import com.example.shoppinglist.features.auth.data.dto.LoginRequestDto
+import com.example.shoppinglist.features.auth.data.dto.TokenDto
+import com.example.shoppinglist.features.auth.data.dto.UserDto
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
