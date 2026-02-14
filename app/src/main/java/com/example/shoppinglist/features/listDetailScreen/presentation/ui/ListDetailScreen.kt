@@ -1,4 +1,4 @@
-package com.example.shoppinglist.features.listDetailScreen.presentation
+package com.example.shoppinglist.features.listDetailScreen.presentation.ui
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
@@ -41,7 +41,7 @@ import com.example.shoppinglist.core.presentation.ui.components.SlElevatedButton
 import com.example.shoppinglist.core.presentation.ui.components.SwipeCardController
 import com.example.shoppinglist.core.theme.AppDimens
 import com.example.shoppinglist.core.theme.ShoppingListTheme
-import com.example.shoppinglist.features.listDetailScreen.presentation.components.AddEditSheetContent
+import com.example.shoppinglist.features.listDetailScreen.presentation.ui.components.AddEditSheetContent
 import com.example.shoppinglist.features.listDetailScreen.presentation.model.ListDetailAction
 import com.example.shoppinglist.features.listDetailScreen.presentation.model.ListDetailEvent
 import com.example.shoppinglist.features.listDetailScreen.presentation.model.ListDetailSheet

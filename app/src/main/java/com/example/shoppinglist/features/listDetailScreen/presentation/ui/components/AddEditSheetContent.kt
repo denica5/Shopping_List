@@ -1,4 +1,4 @@
-package com.example.shoppinglist.features.listDetailScreen.presentation.components
+package com.example.shoppinglist.features.listDetailScreen.presentation.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
