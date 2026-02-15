@@ -2,6 +2,7 @@ package com.example.shoppinglist.features.auth.presentation.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import com.example.shoppinglist.core.presentation.viewmodel.BaseViewModel
+import com.example.shoppinglist.core.utils.onSuccess
 import com.example.shoppinglist.features.auth.domain.useCases.LoginUseCase
 import com.example.shoppinglist.features.auth.presentation.model.LoginScreenAction
 import com.example.shoppinglist.features.auth.presentation.model.LoginScreenEvent
@@ -38,10 +39,13 @@ class LoginViewModel @Inject constructor(private val loginUseCase: LoginUseCase)
 
     private fun login() {
         viewModelScope.launch {
-            loginUseCase.invoke(
+            val result = loginUseCase.invoke(
                 email = _state.value.email,
                 password = _state.value.password
             )
+            result.onSuccess {
+                
+            }
         }
     }
 }
