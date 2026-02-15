@@ -34,5 +34,5 @@ abstract class BaseViewModel<Event, State, Action>(initialState: State) : ViewMo
         }
     }
 
-    open fun obtainEvent(event: Event) {}
+    abstract fun obtainEvent(event: Event)
 }

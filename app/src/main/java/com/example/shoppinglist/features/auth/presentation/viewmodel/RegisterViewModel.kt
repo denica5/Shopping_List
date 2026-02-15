@@ -1,4 +1,4 @@
-package com.example.shoppinglist.features.auth.presentation
+package com.example.shoppinglist.features.auth.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -16,4 +16,5 @@ class RegisterViewModel @Inject constructor(val registerUseCase: RegisterUseCase
             withContext(Dispatchers.IO) { registerUseCase.invoke(email, password) }
         }
     }
+
 }

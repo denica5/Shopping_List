@@ -1,4 +1,4 @@
-package com.example.shoppinglist.features.auth.presentation
+package com.example.shoppinglist.features.auth.presentation.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

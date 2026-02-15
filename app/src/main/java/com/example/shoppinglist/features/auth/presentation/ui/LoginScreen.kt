@@ -1,4 +1,4 @@
-package com.example.shoppinglist.features.auth.presentation
+package com.example.shoppinglist.features.auth.presentation.ui
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -14,27 +14,30 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.example.shoppinglist.core.presentation.ui.components.SLTextButton
 import com.example.shoppinglist.core.presentation.ui.components.SlButtons
 import com.example.shoppinglist.core.presentation.ui.components.SlTextFields
+import com.example.shoppinglist.features.auth.presentation.model.LoginScreenEvent
+import com.example.shoppinglist.features.auth.presentation.viewmodel.LoginViewModel
 
 @Composable
 fun LoginScreen(
     onSignInClick: () -> Unit,
     onCreateNewAccountClick: () -> Unit,
-    onForgotPasswordClick: () -> Unit
+    onForgotPasswordClick: () -> Unit,
+    viewModel: LoginViewModel = hiltViewModel()
 ) {
-    var rememberEmailText by remember { mutableStateOf("") }
-    var rememberPasswordText by remember { mutableStateOf("") }
+
+    val state by viewModel.state.collectAsState()
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -53,15 +56,15 @@ fun LoginScreen(
             )
             Spacer(modifier = Modifier.size(12.dp))
             SlTextFields.SlInputTextField(
-                value = rememberEmailText,
-                onValueChange = { rememberEmailText = it },
+                value = state.email,
+                onValueChange = viewModel::onEmailChange,
                 labelText = "Почта",
 
                 )
             Spacer(Modifier.size(12.dp))
             SlTextFields.SlInputTextField(
-                value = rememberPasswordText,
-                onValueChange = { rememberPasswordText = it },
+                value = state.password,
+                onValueChange = viewModel::onPasswordChange,
                 labelText = "Пароль"
 
             )
@@ -69,7 +72,10 @@ fun LoginScreen(
             SlButtons.SLTextButton(
                 modifier = Modifier.width(150.dp),
                 text = "Вход",
-                onClick = onSignInClick,
+                onClick = {
+                    viewModel.obtainEvent(LoginScreenEvent.LoginClick)
+                    onSignInClick()
+                },
                 textStyle = MaterialTheme.typography.bodyMedium,
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
                 shape = RoundedCornerShape(4.0.dp)
