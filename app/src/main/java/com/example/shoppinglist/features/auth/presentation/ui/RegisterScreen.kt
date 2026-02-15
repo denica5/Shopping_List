@@ -1,4 +1,4 @@
-package com.example.shoppinglist.features.auth.presentation
+package com.example.shoppinglist.features.auth.presentation.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -28,6 +28,7 @@ import com.example.shoppinglist.core.presentation.ui.components.SLTextButton
 import com.example.shoppinglist.core.presentation.ui.components.SlButtons
 import com.example.shoppinglist.core.presentation.ui.components.SlIcon
 import com.example.shoppinglist.core.presentation.ui.components.SlTextFields
+import com.example.shoppinglist.features.auth.presentation.viewmodel.RegisterViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

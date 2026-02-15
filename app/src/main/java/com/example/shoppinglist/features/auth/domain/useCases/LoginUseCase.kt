@@ -1,5 +1,7 @@
 package com.example.shoppinglist.features.auth.domain.useCases
 
+import com.example.shoppinglist.core.utils.NetworkError
+import com.example.shoppinglist.core.utils.Result
 import com.example.shoppinglist.features.auth.domain.AuthRepository
 import javax.inject.Inject
 
@@ -9,7 +11,7 @@ class LoginUseCase @Inject constructor(
     suspend operator fun invoke(
         email: String,
         password: String
-    ) {
-        repository.login(email, password)
+    ): Result<String, NetworkError> {
+        return repository.login(email, password)
     }
 }

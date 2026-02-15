@@ -12,9 +12,9 @@ import androidx.navigation3.ui.NavDisplay
 import androidx.savedstate.serialization.SavedStateConfiguration
 import com.example.shoppinglist.core.presentation.adaptive.TabletListsAndDetailsLayout
 import com.example.shoppinglist.features.listDetailScreen.presentation.ui.ListDetailScreen
-import com.example.shoppinglist.features.auth.presentation.LoginScreen
-import com.example.shoppinglist.features.auth.presentation.PasswordRecoveryScreen
-import com.example.shoppinglist.features.auth.presentation.RegisterScreen
+import com.example.shoppinglist.features.auth.presentation.ui.LoginScreen
+import com.example.shoppinglist.features.auth.presentation.ui.PasswordRecoveryScreen
+import com.example.shoppinglist.features.auth.presentation.ui.RegisterScreen
 import com.example.shoppinglist.features.productLists.presentation.ProductListsScreen
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
