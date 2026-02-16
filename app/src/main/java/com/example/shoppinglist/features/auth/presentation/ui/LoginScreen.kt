@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -27,6 +28,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.example.shoppinglist.core.presentation.ui.components.SLTextButton
 import com.example.shoppinglist.core.presentation.ui.components.SlButtons
 import com.example.shoppinglist.core.presentation.ui.components.SlTextFields
+import com.example.shoppinglist.features.auth.presentation.model.LoginScreenAction
 import com.example.shoppinglist.features.auth.presentation.model.LoginScreenEvent
 import com.example.shoppinglist.features.auth.presentation.viewmodel.LoginViewModel
 
@@ -39,6 +41,17 @@ fun LoginScreen(
 ) {
 
     val state by viewModel.state.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.action.collect {
+            when (it) {
+                is LoginScreenAction.NavigateToProductList -> {
+                    onSignInClick()
+                }
+                else -> {}
+            }
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -77,7 +90,6 @@ fun LoginScreen(
                 text = "Вход",
                 onClick = {
                     viewModel.obtainEvent(LoginScreenEvent.LoginClick)
-                    onSignInClick()
                 },
                 textStyle = MaterialTheme.typography.bodyMedium,
                 containerColor = MaterialTheme.colorScheme.primaryContainer,

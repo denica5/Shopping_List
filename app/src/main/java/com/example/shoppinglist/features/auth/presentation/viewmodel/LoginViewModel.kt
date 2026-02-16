@@ -1,7 +1,9 @@
 package com.example.shoppinglist.features.auth.presentation.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.example.shoppinglist.core.presentation.viewmodel.BaseViewModel
+import com.example.shoppinglist.core.utils.onError
 import com.example.shoppinglist.core.utils.onSuccess
 import com.example.shoppinglist.features.auth.domain.useCases.LoginUseCase
 import com.example.shoppinglist.features.auth.presentation.model.LoginScreenAction
@@ -39,13 +41,21 @@ class LoginViewModel @Inject constructor(private val loginUseCase: LoginUseCase)
 
     private fun login() {
         viewModelScope.launch {
-            val result = loginUseCase.invoke(
+            _state.update { it.copy(errorMessage = null, isLoading = true) }
+
+           loginUseCase.invoke(
                 email = _state.value.email,
                 password = _state.value.password
-            )
-            result.onSuccess {
-                
+            ).onSuccess { userId ->
+                _state.update { it.copy(isLoading = false) }
+               Log.d("LoginViewMOdel", userId)
+                _action.emit(LoginScreenAction.NavigateToProductList)
+               Log.d("LoginViewMOdel", action.value.toString())
+            }.onError { networkError ->
+                _state.update { it.copy(errorMessage = networkError.name) }
+               Log.d("LoginViewMOdel", networkError.name)
             }
+
         }
     }
 }
