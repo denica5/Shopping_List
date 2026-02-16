@@ -13,7 +13,7 @@ import androidx.savedstate.serialization.SavedStateConfiguration
 import com.example.shoppinglist.core.presentation.adaptive.TabletListsAndDetailsLayout
 import com.example.shoppinglist.features.listDetailScreen.presentation.ui.ListDetailScreen
 import com.example.shoppinglist.features.auth.presentation.ui.LoginScreen
-import com.example.shoppinglist.features.auth.presentation.ui.PasswordRecoveryScreen
+import com.example.shoppinglist.features.auth.presentation.ui.ResetPasswordScreen
 import com.example.shoppinglist.features.auth.presentation.ui.RegisterScreen
 import com.example.shoppinglist.features.productLists.presentation.ProductListsScreen
 import kotlinx.serialization.modules.SerializersModule
@@ -95,7 +95,7 @@ fun NavigationRoot(modifier: Modifier = Modifier) {
 
                 is Route.PasswordRecoveryScreen -> {
                     NavEntry(key) {
-                        PasswordRecoveryScreen(
+                        ResetPasswordScreen(
                             onPasswordRecoveryClick = { backStack.remove(key) },
                             onBackArrowClick = { backStack.remove(key) })
                     }

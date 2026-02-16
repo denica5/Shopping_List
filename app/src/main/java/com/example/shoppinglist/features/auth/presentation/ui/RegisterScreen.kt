@@ -13,10 +13,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -28,19 +27,29 @@ import com.example.shoppinglist.core.presentation.ui.components.SLTextButton
 import com.example.shoppinglist.core.presentation.ui.components.SlButtons
 import com.example.shoppinglist.core.presentation.ui.components.SlIcon
 import com.example.shoppinglist.core.presentation.ui.components.SlTextFields
+import com.example.shoppinglist.features.auth.presentation.model.RegisterAction
+import com.example.shoppinglist.features.auth.presentation.model.RegisterEvent
 import com.example.shoppinglist.features.auth.presentation.viewmodel.RegisterViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RegisterScreen(onRegisterClick: () -> Unit, onBackArrowClick: () -> Unit, viewModel: RegisterViewModel = hiltViewModel()) {
+fun RegisterScreen(
+    onRegisterClick: () -> Unit,
+    onBackArrowClick: () -> Unit,
+    viewModel: RegisterViewModel = hiltViewModel()
+) {
+    val state by viewModel.state.collectAsState()
+    LaunchedEffect(Unit) {
+        viewModel.action.collect {
+            when (it) {
+                is RegisterAction.NavigateToLogin -> {
+                    onRegisterClick()
+                }
 
-    var rememberEmailText by remember { mutableStateOf("") }
-    var rememberPasswordText by remember { mutableStateOf("") }
-    var rememberPasswordCheckText by remember { mutableStateOf("") }
-
-
-
-
+                else -> {}
+            }
+        }
+    }
     Scaffold(
         topBar = {
             TopAppBar(
@@ -70,27 +79,29 @@ fun RegisterScreen(onRegisterClick: () -> Unit, onBackArrowClick: () -> Unit, vi
             )
             Spacer(Modifier.size(12.dp))
             SlTextFields.SlInputTextField(
-                value = rememberEmailText,
-                onValueChange = { rememberEmailText = it },
+                value = state.email,
+                onValueChange = viewModel::onEmailChange,
                 labelText = "Почта",
 
                 )
             Spacer(Modifier.size(12.dp))
             SlTextFields.SlInputTextField(
-                value = rememberPasswordText,
-                onValueChange = { rememberPasswordText = it },
+                value = state.password,
+                onValueChange = viewModel::onPasswordChange,
                 labelText = "Пароль"
             )
             Spacer(Modifier.size(12.dp))
             SlTextFields.SlInputTextField(
-                value = rememberPasswordCheckText,
-                onValueChange = { rememberPasswordCheckText = it },
+                value = state.passwordCheck,
+                onValueChange = viewModel::onPasswordCheckChange,
                 labelText = "Повторите пароль"
             )
             Spacer(Modifier.size(12.dp))
             SlButtons.SLTextButton(
                 text = "Создать аккаунт",
-                onClick = { viewModel.register(rememberEmailText.trim(), password = rememberPasswordText.trim()) },
+                onClick = {
+                    viewModel.obtainEvent(RegisterEvent.RegisterClick)
+                },
                 textStyle = MaterialTheme.typography.bodyMedium,
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
                 shape = RoundedCornerShape(4.0.dp)

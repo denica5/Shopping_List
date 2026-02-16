@@ -13,26 +13,32 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.example.shoppinglist.R
 import com.example.shoppinglist.core.presentation.ui.components.SLTextButton
 import com.example.shoppinglist.core.presentation.ui.components.SlButtons
 import com.example.shoppinglist.core.presentation.ui.components.SlIcon
 import com.example.shoppinglist.core.presentation.ui.components.SlTextFields
+import com.example.shoppinglist.features.auth.presentation.model.ResetPasswordEvent
+import com.example.shoppinglist.features.auth.presentation.viewmodel.ResetPasswordViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PasswordRecoveryScreen(onPasswordRecoveryClick: () -> Unit, onBackArrowClick: () -> Unit) {
+fun ResetPasswordScreen(
+    onPasswordRecoveryClick: () -> Unit,
+    onBackArrowClick: () -> Unit,
+    viewModel: ResetPasswordViewModel = hiltViewModel()
+) {
 
-    var rememberEmailText by remember { mutableStateOf("") }
+
+    val state by viewModel.state.collectAsState()
 
     Scaffold(
         topBar = {
@@ -57,21 +63,21 @@ fun PasswordRecoveryScreen(onPasswordRecoveryClick: () -> Unit, onBackArrowClick
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Восстановление пароля",
+                text = "Сброс пароля",
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onPrimaryContainer
             )
             Spacer(Modifier.size(12.dp))
             SlTextFields.SlInputTextField(
-                value = rememberEmailText,
-                onValueChange = { rememberEmailText = it },
+                value = state.email,
+                onValueChange = viewModel::onEmailChange,
                 labelText = "Почта",
 
                 )
             Spacer(Modifier.size(12.dp))
             SlButtons.SLTextButton(
-                text = "Восстановить пароль",
-                onClick = { },
+                text = "Сбросить пароль",
+                onClick = { viewModel.obtainEvent(ResetPasswordEvent.ResetPasswordClick) },
                 textStyle = MaterialTheme.typography.bodyMedium,
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
                 shape = RoundedCornerShape(4.0.dp)
@@ -82,6 +88,6 @@ fun PasswordRecoveryScreen(onPasswordRecoveryClick: () -> Unit, onBackArrowClick
 
 @Preview
 @Composable
-fun PreviewPasswordRecoveryScreen() {
-    PasswordRecoveryScreen({}) { }
+fun PreviewResetPasswordScreen() {
+    ResetPasswordScreen(onPasswordRecoveryClick = {}, onBackArrowClick = {})
 }
