@@ -60,7 +60,7 @@ class LoginViewModel @Inject constructor(private val loginUseCase: LoginUseCase)
                     _state.update { it.copy(isLoading = false) }
                     Log.d(tag, userId)
                     _action.emit(LoginScreenAction.NavigateToProductList)
-                    Log.d(tag, action.value.toString())
+                    Log.d(tag, action.replayCache.toString())
                 }.onError { networkError ->
                     when (networkError.toAuthError()) {
                         is AuthError.Email -> _state.update { it.copy(emailError = networkError.toUIText()) }
@@ -74,7 +74,7 @@ class LoginViewModel @Inject constructor(private val loginUseCase: LoginUseCase)
                     _state.update { it.copy(isLoading = false) }
 
                     Log.d(tag, networkError.name)
-                    Log.d(tag, _action.value.toString())
+                    Log.d(tag, _action.replayCache.toString())
                 }
 
             },
