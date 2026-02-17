@@ -2,7 +2,6 @@ package com.example.shoppinglist.core.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -19,7 +18,7 @@ abstract class BaseViewModel<Event, State, Action>(initialState: State) : ViewMo
         block: suspend () -> Unit,
         onError: suspend (Throwable) -> Unit
     ) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             runCatching {
                 block()
             }.onFailure { error ->
@@ -34,5 +33,5 @@ abstract class BaseViewModel<Event, State, Action>(initialState: State) : ViewMo
         }
     }
 
-    open fun obtainEvent(event: Event) {}
+    abstract fun obtainEvent(event: Event)
 }

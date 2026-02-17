@@ -3,6 +3,7 @@ package com.example.shoppinglist.core.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
@@ -11,16 +12,20 @@ import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import androidx.savedstate.serialization.SavedStateConfiguration
 import com.example.shoppinglist.core.presentation.adaptive.TabletListsAndDetailsLayout
+import com.example.shoppinglist.core.presentation.viewmodel.NavigationViewModel
 import com.example.shoppinglist.features.listDetailScreen.presentation.ui.ListDetailScreen
-import com.example.shoppinglist.features.auth.presentation.LoginScreen
-import com.example.shoppinglist.features.auth.presentation.PasswordRecoveryScreen
-import com.example.shoppinglist.features.auth.presentation.RegisterScreen
+import com.example.shoppinglist.features.auth.presentation.ui.LoginScreen
+import com.example.shoppinglist.features.auth.presentation.ui.ResetPasswordScreen
+import com.example.shoppinglist.features.auth.presentation.ui.RegisterScreen
 import com.example.shoppinglist.features.productLists.presentation.ProductListsScreen
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 
 @Composable
-fun NavigationRoot(modifier: Modifier = Modifier) {
+fun NavigationRoot(
+    modifier: Modifier = Modifier,
+    navigationViewModel: NavigationViewModel = hiltViewModel()
+) {
     val backStack = rememberNavBackStack(
         configuration = SavedStateConfiguration {
             serializersModule = SerializersModule {
@@ -29,11 +34,18 @@ fun NavigationRoot(modifier: Modifier = Modifier) {
                     subclass(Route.ListDetailScreen::class, Route.ListDetailScreen.serializer())
                     subclass(Route.LoginScreen::class, Route.LoginScreen.serializer())
                     subclass(Route.RegisterScreen::class, Route.RegisterScreen.serializer())
-                    subclass(Route.PasswordRecoveryScreen::class, Route.PasswordRecoveryScreen.serializer())
+                    subclass(
+                        Route.PasswordRecoveryScreen::class,
+                        Route.PasswordRecoveryScreen.serializer()
+                    )
                 }
             }
         },
-        Route.LoginScreen
+        if (navigationViewModel.isLoggedIn()) {
+            Route.ProductLists
+        } else {
+            Route.LoginScreen
+        }
     )
 
     NavDisplay(
@@ -88,16 +100,16 @@ fun NavigationRoot(modifier: Modifier = Modifier) {
                 is Route.RegisterScreen -> {
                     NavEntry(key) {
                         RegisterScreen(
-                            onRegisterClick = { backStack.remove(key) },
-                            onBackArrowClick = { backStack.remove(key) })
+                            onRegisterClick = { backStack.removeLastOrNull() },
+                            onBackArrowClick = { backStack.removeLastOrNull() })
                     }
                 }
 
                 is Route.PasswordRecoveryScreen -> {
                     NavEntry(key) {
-                        PasswordRecoveryScreen(
-                            onPasswordRecoveryClick = { backStack.remove(key) },
-                            onBackArrowClick = { backStack.remove(key) })
+                        ResetPasswordScreen(
+                            onPasswordRecoveryClick = { backStack.removeLastOrNull() },
+                            onBackArrowClick = { backStack.removeLastOrNull() })
                     }
                 }
 

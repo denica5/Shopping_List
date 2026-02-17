@@ -3,6 +3,7 @@ package com.example.shoppinglist.features.auth.data
 import com.example.shoppinglist.features.auth.domain.AuthRepository
 import com.example.shoppinglist.core.utils.NetworkError
 import com.example.shoppinglist.core.utils.Result
+import com.example.shoppinglist.features.auth.data.mappers.mapAuthException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
@@ -17,35 +18,43 @@ class AuthRepositoryImpl @Inject constructor(private val auth: FirebaseAuth) : A
         password: String
     ): Result<String, NetworkError> {
         return try {
-            val user = auth.signInWithEmailAndPassword(email, password).await()
-            Result.Success(user.user?.uid ?: "")
-        } catch (e: FirebaseAuthInvalidUserException) {
-            Result.Error(NetworkError.CONFLICT)
-        } catch (e: FirebaseAuthInvalidCredentialsException) {
-            // неверный пароль
-            Result.Error(NetworkError.PAYLOAD_TOO_LARGE)
-        } catch (e: FirebaseAuthWeakPasswordException) {
-            // пользователь заблокирован
-            Result.Error(NetworkError.UNAUTHORIZED)
+            val result = auth.signInWithEmailAndPassword(email, password).await()
+            Result.Success(result.user?.uid ?: "")
         } catch (e: Exception) {
-            // остальные ошибки (сеть, таймаут, неизвестные)
-            Result.Error(NetworkError.UNKNOWN)
+            Result.Error(mapAuthException(e))
         }
     }
 
     override fun logout() {
-        auth.signOut()
+        try {
+            auth.signOut()
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Error(mapAuthException(e))
+        }
     }
 
     override fun isLoggedIn(): Boolean {
         return auth.currentUser != null
     }
 
-    override suspend fun resetPassword(email: String) {
-        auth.sendPasswordResetEmail(email).await()
+    override suspend fun resetPassword(email: String): Result<Unit, NetworkError> {
+        return try {
+            auth.sendPasswordResetEmail(email).await()
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Error(mapAuthException(e))
+        }
     }
 
-    override suspend fun register(email: String, password: String) {
-        auth.createUserWithEmailAndPassword(email, password).await()
+    override suspend fun register(email: String, password: String): Result<String, NetworkError> {
+        return try {
+            val result = auth.createUserWithEmailAndPassword(email, password).await()
+            Result.Success(result.user?.uid ?: "")
+        } catch (e: Exception) {
+            Result.Error(mapAuthException(e))
+        }
+
     }
+
 }

@@ -29,6 +29,8 @@ object SlTextFields {
         singleLine: Boolean = true,
         textStyle: TextStyle = MaterialTheme.typography.bodyLarge,
         colors: SlTextFieldColors = SlTextFieldDefaults.colors(),
+        isError: Boolean = false,
+        supportText: @Composable () -> Unit = {}
     ) {
         val safeValue = value.take(64)
         SlTextField(
@@ -46,6 +48,8 @@ object SlTextFields {
             labelBackgroundColor = colors.labelBackgroundColor,
             borderColor = colors.borderColor,
             keyboardOptions = KeyboardOptions.Default,
+            isError = isError,
+            supportText = supportText
         )
     }
 
@@ -113,6 +117,8 @@ object SlTextFields {
         labelBackgroundColor: Color = Color.Unspecified,
         borderColor: Color = MaterialTheme.colorScheme.outline,
         keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+        isError: Boolean = false,
+        supportText: @Composable () -> Unit = {}
     ) {
         OutlinedTextField(
             modifier = modifier,
@@ -159,7 +165,9 @@ object SlTextFields {
                 unfocusedLabelColor = labelColor,
                 focusedBorderColor = MaterialTheme.colorScheme.primary,
                 unfocusedBorderColor = borderColor,
-            )
+            ),
+            isError = isError,
+            supportingText = supportText
         )
     }
 }
