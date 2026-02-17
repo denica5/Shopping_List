@@ -41,12 +41,11 @@ fun NavigationRoot(
                 }
             }
         },
-//        if (navigationViewModel.isLoggedIn()) {
-//            Route.ProductLists
-//        } else {
-//            Route.LoginScreen
-//        }
-        Route.LoginScreen
+        if (navigationViewModel.isLoggedIn()) {
+            Route.ProductLists
+        } else {
+            Route.LoginScreen
+        }
     )
 
     NavDisplay(
