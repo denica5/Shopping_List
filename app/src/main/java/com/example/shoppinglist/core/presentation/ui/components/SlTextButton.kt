@@ -1,8 +1,10 @@
 package com.example.shoppinglist.core.presentation.ui.components
 
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,7 +28,9 @@ fun SlButtons.SLTextButton(
     disabledContainerColor: Color = Color.Transparent,
     disabledContentColor: Color = Color.Transparent,
     textStyle: TextStyle = MaterialTheme.typography.bodyMedium,
-    shape: RoundedCornerShape = RoundedCornerShape(50.dp)
+    shape: RoundedCornerShape = RoundedCornerShape(50.dp),
+    isLoading: Boolean = false,
+    enabled: Boolean = true
 ) {
     Button(
         onClick = onClick,
@@ -37,9 +41,17 @@ fun SlButtons.SLTextButton(
             disabledContainerColor = disabledContainerColor,
             disabledContentColor = disabledContentColor
         ),
-        shape = shape
+        shape = shape,
+        enabled = enabled
     ) {
-        Text(text = text, style = textStyle)
+        if (isLoading) {
+            CircularProgressIndicator(
+                modifier = Modifier.size(20.dp),
+                strokeWidth = 2.dp
+            )
+        } else {
+            Text(text = text, style = textStyle)
+        }
     }
 }
 

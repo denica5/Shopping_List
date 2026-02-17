@@ -1,16 +1,18 @@
 package com.example.shoppinglist.features.auth.presentation.viewmodel
 
-import androidx.lifecycle.viewModelScope
 import com.example.shoppinglist.core.presentation.viewmodel.BaseViewModel
+import com.example.shoppinglist.core.utils.AuthError
+import com.example.shoppinglist.core.utils.UIText
 import com.example.shoppinglist.core.utils.onError
 import com.example.shoppinglist.core.utils.onSuccess
+import com.example.shoppinglist.core.utils.toAuthError
+import com.example.shoppinglist.core.utils.toUIText
 import com.example.shoppinglist.features.auth.domain.useCases.RegisterUseCase
 import com.example.shoppinglist.features.auth.presentation.model.RegisterAction
 import com.example.shoppinglist.features.auth.presentation.model.RegisterEvent
 import com.example.shoppinglist.features.auth.presentation.model.RegisterState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -29,9 +31,10 @@ class RegisterViewModel @Inject constructor(val registerUseCase: RegisterUseCase
 
     fun register(email: String, password: String, passwordCheck: String) {
         if (password != passwordCheck) {
+            _state.update { it.copy(passwordError = UIText.StringResource(com.example.shoppinglist.R.string.error_check_password)) }
             return
         }
-        viewModelScope.launch {
+        runSafely(block = {
             _state.update {
                 it.copy(
                     emailError = null,
@@ -46,11 +49,24 @@ class RegisterViewModel @Inject constructor(val registerUseCase: RegisterUseCase
                     _action.emit(RegisterAction.NavigateToLogin)
                 }
                 .onError { networkError ->
-//                    _state.update {
-//                        it.copy(errorMessage = networkError.name, isLoading = false)
-//                    }
+                    when (networkError.toAuthError()) {
+                        is AuthError.Email -> _state.update { it.copy(emailError = networkError.toUIText()) }
+                        is AuthError.Form -> {
+                            _state.update { it.copy(formError = networkError.toUIText()) }
+                            _action.emit(RegisterAction.ShowFormError(networkError.toUIText()))
+                        }
+
+                        is AuthError.Password -> _state.update { it.copy(passwordError = networkError.toUIText()) }
+                    }
+                    _state.update { it.copy(isLoading = false) }
                 }
-        }
+        }, onError = { throwable ->
+            _action.emit(
+                RegisterAction.ShowFormError(
+                    UIText.DynamicString("Unexpected error")
+                )
+            )
+        })
     }
 
     fun onEmailChange(email: String) {

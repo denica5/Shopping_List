@@ -1,16 +1,18 @@
 package com.example.shoppinglist.features.auth.presentation.viewmodel
 
-import androidx.lifecycle.viewModelScope
 import com.example.shoppinglist.core.presentation.viewmodel.BaseViewModel
+import com.example.shoppinglist.core.utils.AuthError
+import com.example.shoppinglist.core.utils.UIText
 import com.example.shoppinglist.core.utils.onError
 import com.example.shoppinglist.core.utils.onSuccess
+import com.example.shoppinglist.core.utils.toAuthError
+import com.example.shoppinglist.core.utils.toUIText
 import com.example.shoppinglist.features.auth.domain.useCases.ResetPasswordUseCase
 import com.example.shoppinglist.features.auth.presentation.model.ResetPasswordAction
 import com.example.shoppinglist.features.auth.presentation.model.ResetPasswordEvent
 import com.example.shoppinglist.features.auth.presentation.model.ResetPasswordState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -28,7 +30,7 @@ class ResetPasswordViewModel @Inject constructor(private val resetPasswordUseCas
     }
 
     fun resetPassword(email: String) {
-        viewModelScope.launch {
+        runSafely({
             _state.update {
                 it.copy(
                     emailError = null,
@@ -44,10 +46,26 @@ class ResetPasswordViewModel @Inject constructor(private val resetPasswordUseCas
                     _action.emit(ResetPasswordAction.NavigateToLogin)
 
                 }.onError { networkError ->
-//                    _state.update { it.copy(isLoading = false, errorMessage = networkError.name) }
+                    when (networkError.toAuthError()) {
+                        is AuthError.Email -> _state.update { it.copy(emailError = networkError.toUIText()) }
+                        is AuthError.Form -> {
+                            _state.update { it.copy(formError = networkError.toUIText()) }
+                            _action.emit(ResetPasswordAction.ShowFormError(networkError.toUIText()))
+                        }
+
+                        else -> _state.update { it.copy(formError = networkError.toUIText()) }
+                    }
+                    _state.update { it.copy(isLoading = false) }
 
                 }
-        }
+        }, onError = { throwable ->
+            _action.emit(
+                ResetPasswordAction.ShowFormError(
+                    UIText.DynamicString("Unexpected error")
+                )
+            )
+
+        })
     }
 
     fun onEmailChange(email: String) {
