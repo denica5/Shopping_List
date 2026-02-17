@@ -1,5 +1,6 @@
 package com.example.shoppinglist.features.listDetailScreen.presentation.viewmodel
 
+import androidx.lifecycle.viewModelScope
 import com.example.shoppinglist.core.presentation.viewmodel.BaseViewModel
 import com.example.shoppinglist.features.listDetailScreen.presentation.model.ListDetailAction
 import com.example.shoppinglist.features.listDetailScreen.presentation.model.ListDetailEvent
@@ -11,6 +12,7 @@ import com.example.shoppinglist.features.listDetailScreen.presentation.model.Sor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 // TODO: при подключении БД настроить инжекты useCase-ов в конструкторе
@@ -48,14 +50,11 @@ class ListDetailViewModel @Inject constructor() :
             is ListDetailEvent.ConfirmClearPurchased -> confirmClearPurchased()
             is ListDetailEvent.DismissClearPurchasedDialog -> dismissClearPurchasedDialog()
             is ListDetailEvent.BackClick -> {
-                _action.update { ListDetailAction.NavigateBack }
+                viewModelScope.launch { _action.emit(ListDetailAction.NavigateBack) }
             }
         }
     }
 
-    fun clearAction() {
-        _action.update { null }
-    }
 
     private fun openAddSheet() {
         _state.update {

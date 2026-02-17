@@ -76,7 +76,7 @@ fun NavigationRoot(
                     NavEntry(key) {
                         ListDetailScreen(
                             listName = key.todo,
-                            onBackClick = { backStack.removeLastOrNull() },
+                            onBackClick = { backStack.remove(key) },
                         )
                     }
                 }
@@ -86,6 +86,7 @@ fun NavigationRoot(
                         LoginScreen(
                             onSignInClick = {
                                 backStack.add(Route.ProductLists)
+                                backStack.removeAt(0)
                             },
                             onCreateNewAccountClick = {
                                 backStack.add(Route.RegisterScreen)
@@ -100,16 +101,16 @@ fun NavigationRoot(
                 is Route.RegisterScreen -> {
                     NavEntry(key) {
                         RegisterScreen(
-                            onRegisterClick = { backStack.removeLastOrNull() },
-                            onBackArrowClick = { backStack.removeLastOrNull() })
+                            onRegisterClick = { backStack.remove(key) },
+                            onBackArrowClick = { backStack.remove(key) })
                     }
                 }
 
                 is Route.PasswordRecoveryScreen -> {
                     NavEntry(key) {
                         ResetPasswordScreen(
-                            onPasswordRecoveryClick = { backStack.removeLastOrNull() },
-                            onBackArrowClick = { backStack.removeLastOrNull() })
+                            onPasswordRecoveryClick = { backStack.remove(key) },
+                            onBackArrowClick = { backStack.remove(key) })
                     }
                 }
 

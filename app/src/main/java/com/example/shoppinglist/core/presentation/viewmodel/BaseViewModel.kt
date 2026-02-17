@@ -2,7 +2,9 @@ package com.example.shoppinglist.core.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
@@ -11,8 +13,8 @@ abstract class BaseViewModel<Event, State, Action>(initialState: State) : ViewMo
 
     protected val _state = MutableStateFlow(initialState)
     val state = _state.asStateFlow()
-    protected val _action = MutableStateFlow<Action?>(null)
-    val action = _action.asStateFlow()
+    protected val _action = MutableSharedFlow<Action>()
+    val action = _action.asSharedFlow()
 
     protected fun runSafely(
         block: suspend () -> Unit,

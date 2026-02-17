@@ -63,7 +63,7 @@ fun ListDetailScreen(
     viewModel: ListDetailViewModel = hiltViewModel(),
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle().value
-    val action = viewModel.action.collectAsStateWithLifecycle().value
+//    val action = viewModel.action.collectAsStateWithLifecycle().value
     val swipeController = remember { SwipeCardController() }
     val lazyListState = rememberLazyListState()
     val reorderableLazyListState = rememberReorderableLazyListState(lazyListState) { from, to ->
@@ -97,13 +97,13 @@ fun ListDetailScreen(
         }
     }
 
-    LaunchedEffect(action) {
-        when (action) {
-            is ListDetailAction.NavigateBack -> {
-                onBackClick()
-                viewModel.clearAction()
+    LaunchedEffect(Unit) {
+        viewModel.action.collect { action ->
+            when (action) {
+                is ListDetailAction.NavigateBack -> {
+                    onBackClick()
+                }
             }
-            null -> {}
         }
     }
 
