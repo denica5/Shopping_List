@@ -29,7 +29,13 @@ class ResetPasswordViewModel @Inject constructor(private val resetPasswordUseCas
 
     fun resetPassword(email: String) {
         viewModelScope.launch {
-            _state.update { it.copy(isLoading = true) }
+            _state.update {
+                it.copy(
+                    emailError = null,
+                    formError = null,
+                    isLoading = true
+                )
+            }
             resetPasswordUseCase.invoke(email)
                 .onSuccess {
                     _state.update {
@@ -38,7 +44,7 @@ class ResetPasswordViewModel @Inject constructor(private val resetPasswordUseCas
                     _action.emit(ResetPasswordAction.NavigateToLogin)
 
                 }.onError { networkError ->
-                    _state.update { it.copy(isLoading = false, errorMessage = networkError.name) }
+//                    _state.update { it.copy(isLoading = false, errorMessage = networkError.name) }
 
                 }
         }

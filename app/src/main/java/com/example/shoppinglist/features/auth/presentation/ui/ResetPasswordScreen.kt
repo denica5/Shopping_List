@@ -18,6 +18,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -63,7 +64,7 @@ fun ResetPasswordScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Сброс пароля",
+                text = stringResource(R.string.reset_password_screen_label),
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onPrimaryContainer
             )
@@ -71,12 +72,12 @@ fun ResetPasswordScreen(
             SlTextFields.SlInputTextField(
                 value = state.email,
                 onValueChange = viewModel::onEmailChange,
-                labelText = "Почта",
+                labelText = stringResource(R.string.email_label),
 
                 )
             Spacer(Modifier.size(12.dp))
             SlButtons.SLTextButton(
-                text = "Сбросить пароль",
+                text = stringResource(R.string.reset_password_label),
                 onClick = { viewModel.obtainEvent(ResetPasswordEvent.ResetPasswordClick) },
                 textStyle = MaterialTheme.typography.bodyMedium,
                 containerColor = MaterialTheme.colorScheme.primaryContainer,

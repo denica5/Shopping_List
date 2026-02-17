@@ -56,4 +56,25 @@
     <string name="unit_pcs" translatable="false">шт</string>
     <string name="unit_kg" translatable="false">кг</string>
     <string name="unit_g" translatable="false">г</string>
+    <string name="network_error_request_timeout">Превышено время ожидания ответа</string>
+    <string name="network_error_no_internet">Отсутствует соединение с сетью</string>
+    <string name="network_error_wrong_password">Неправильный пароль</string>
+    <string name="network_error_invalid_email">Неправильный email</string>
+    <string name="network_error_weak_password">Слабый пароль</string>
+    <string name="network_error_user_not_found">Пользователь с таким email не найден</string>
+    <string name="network_error_unknown">Неизвестная ошибка</string>
+    <string name="network_error_email_already_in_use">Почта уже зарегистрирована</string>
+    <string name="network_error_invalid_credential">Неверная почта или пароль</string>
+    <string name="login_label">Вход</string>
+    <string name="email_label">Почта</string>
+    <string name="password_label">Пароль</string>
+    <string name="forgot_password_label">Забыли пароль?</string>
+    <string name="create_new_account_label">Создать новый аккаунт</string>
+    <string name="registration_label">Регистрация</string>
+    <string name="check_password_label">Повторите пароль</string>
+    <string name="create_account_label">Создать аккаунт</string>
+    <string name="reset_password_label">Сбросить пароль</string>
+    <string name="reset_password_screen_label">Сброс пароля</string>
+
+
 </resources>

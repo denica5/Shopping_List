@@ -32,16 +32,23 @@ class RegisterViewModel @Inject constructor(val registerUseCase: RegisterUseCase
             return
         }
         viewModelScope.launch {
-            _state.update { it.copy(errorMessage = null, isLoading = true) }
+            _state.update {
+                it.copy(
+                    emailError = null,
+                    passwordError = null,
+                    formError = null,
+                    isLoading = true
+                )
+            }
             registerUseCase.invoke(email, password)
                 .onSuccess {
                     _state.update { it.copy(isLoading = false) }
                     _action.emit(RegisterAction.NavigateToLogin)
                 }
                 .onError { networkError ->
-                    _state.update {
-                        it.copy(errorMessage = networkError.name, isLoading = false)
-                    }
+//                    _state.update {
+//                        it.copy(errorMessage = networkError.name, isLoading = false)
+//                    }
                 }
         }
     }

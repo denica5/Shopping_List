@@ -19,6 +19,15 @@ fun mapAuthException(e: Exception): NetworkError {
             NetworkError.WEAK_PASSWORD
         }
 
+        is FirebaseAuthInvalidCredentialsException -> {
+            when (e.errorCode) {
+                "ERROR_INVALID_EMAIL" -> NetworkError.INVALID_EMAIL
+                "ERROR_WRONG_PASSWORD" -> NetworkError.WRONG_PASSWORD
+                "ERROR_INVALID_CREDENTIAL" -> NetworkError.INVALID_EMAIL
+                else -> NetworkError.UNKNOWN
+            }
+        }
+
 
         is FirebaseAuthInvalidUserException -> {
             when (e.errorCode) {
@@ -28,14 +37,6 @@ fun mapAuthException(e: Exception): NetworkError {
             }
         }
 
-        is FirebaseAuthInvalidCredentialsException -> {
-            when (e.errorCode) {
-                "ERROR_INVALID_EMAIL" -> NetworkError.INVALID_EMAIL
-                "ERROR_WRONG_PASSWORD" -> NetworkError.WRONG_PASSWORD
-                "ERROR_INVALID_CREDENTIAL" -> NetworkError.WRONG_PASSWORD
-                else -> NetworkError.UNKNOWN
-            }
-        }
 
         is FirebaseAuthUserCollisionException -> {
             when (e.errorCode) {

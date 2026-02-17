@@ -3,8 +3,11 @@ package com.example.shoppinglist.features.auth.presentation.viewmodel
 import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.example.shoppinglist.core.presentation.viewmodel.BaseViewModel
+import com.example.shoppinglist.core.utils.AuthError
 import com.example.shoppinglist.core.utils.onError
 import com.example.shoppinglist.core.utils.onSuccess
+import com.example.shoppinglist.core.utils.toAuthError
+import com.example.shoppinglist.core.utils.toUIText
 import com.example.shoppinglist.features.auth.domain.useCases.LoginUseCase
 import com.example.shoppinglist.features.auth.presentation.model.LoginScreenAction
 import com.example.shoppinglist.features.auth.presentation.model.LoginScreenEvent
@@ -41,19 +44,31 @@ class LoginViewModel @Inject constructor(private val loginUseCase: LoginUseCase)
 
     private fun login() {
         viewModelScope.launch {
-            _state.update { it.copy(errorMessage = null, isLoading = true) }
+            _state.update {
+                it.copy(
+                    emailError = null,
+                    passwordError = null,
+                    formError = null,
+                    isLoading = true
+                )
+            }
 
-           loginUseCase.invoke(
+            loginUseCase.invoke(
                 email = _state.value.email,
                 password = _state.value.password
             ).onSuccess { userId ->
                 _state.update { it.copy(isLoading = false) }
-               Log.d("LoginViewMOdel", userId)
+                Log.d(tag, userId)
                 _action.emit(LoginScreenAction.NavigateToProductList)
-               Log.d("LoginViewMOdel", action.value.toString())
+                Log.d(tag, action.value.toString())
             }.onError { networkError ->
-                _state.update { it.copy(errorMessage = networkError.name) }
-               Log.d("LoginViewMOdel", networkError.name)
+                when (networkError.toAuthError()) {
+                    is AuthError.Email -> _state.update { it.copy(emailError = networkError.toUIText()) }
+                    is AuthError.Form -> _state.update { it.copy(formError = networkError.toUIText()) }
+                    is AuthError.Password -> _state.update { it.copy(passwordError = networkError.toUIText()) }
+                }
+                _state.update { it.copy(isLoading = false) }
+                Log.d(tag, networkError.name)
             }
 
         }

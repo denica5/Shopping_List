@@ -21,13 +21,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.example.shoppinglist.R
 import com.example.shoppinglist.core.presentation.ui.components.SLTextButton
 import com.example.shoppinglist.core.presentation.ui.components.SlButtons
 import com.example.shoppinglist.core.presentation.ui.components.SlTextFields
+import com.example.shoppinglist.core.utils.asString
 import com.example.shoppinglist.features.auth.presentation.model.LoginScreenAction
 import com.example.shoppinglist.features.auth.presentation.model.LoginScreenEvent
 import com.example.shoppinglist.features.auth.presentation.viewmodel.LoginViewModel
@@ -48,6 +51,7 @@ fun LoginScreen(
                 is LoginScreenAction.NavigateToProductList -> {
                     onSignInClick()
                 }
+
                 else -> {}
             }
         }
@@ -66,7 +70,7 @@ fun LoginScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Вход",
+                text = stringResource(R.string.login_label),
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onPrimaryContainer
             )
@@ -74,20 +78,30 @@ fun LoginScreen(
             SlTextFields.SlInputTextField(
                 value = state.email,
                 onValueChange = viewModel::onEmailChange,
-                labelText = "Почта",
-
-                )
+                labelText = stringResource(R.string.email_label),
+            )
             Spacer(Modifier.size(12.dp))
             SlTextFields.SlInputTextField(
                 value = state.password,
                 onValueChange = viewModel::onPasswordChange,
-                labelText = "Пароль"
-
+                labelText = stringResource(R.string.password_label),
+                isError = state.passwordError != null || state.emailError != null,
+                supportText = {
+                    if (state.passwordError != null) {
+                        state.passwordError?.let {
+                            Text(it.asString(), color = MaterialTheme.colorScheme.error)
+                        }
+                    } else if (state.emailError != null) {
+                        state.emailError?.let {
+                            Text(it.asString(), color = MaterialTheme.colorScheme.error)
+                        }
+                    }
+                }
             )
             Spacer(Modifier.size(12.dp))
             SlButtons.SLTextButton(
                 modifier = Modifier.width(150.dp),
-                text = "Вход",
+                text = stringResource(R.string.login_label),
                 onClick = {
                     viewModel.obtainEvent(LoginScreenEvent.LoginClick)
                 },
@@ -97,7 +111,7 @@ fun LoginScreen(
             )
             Spacer(modifier = Modifier.size(4.dp))
             Text(
-                text = "Забыли пароль?",
+                text = stringResource(R.string.forgot_password_label),
                 color = MaterialTheme.colorScheme.primary,
                 style = MaterialTheme.typography.bodySmall,
                 modifier = Modifier
@@ -110,7 +124,7 @@ fun LoginScreen(
         }
 
         Text(
-            text = "Создать новый аккаунт",
+            text = stringResource(R.string.create_new_account_label),
             color = MaterialTheme.colorScheme.primary,
             style = MaterialTheme.typography.bodySmall,
             modifier = Modifier
