@@ -38,7 +38,7 @@ fun ListCard(
     list: ProductList,
     viewModel: ProductListsViewModel,
     controller: SwipeCardController,
-    onItemClick: (String) -> Unit
+    onItemClick: (ProductList) -> Unit
 ) {
     SwipeContainer(
         id = list.id,
@@ -71,7 +71,7 @@ fun ListCard(
         },
         content = {
             Card(
-                onClick = { onItemClick(list.name) },
+                onClick = { onItemClick(list) },
                 colors = CardDefaults.cardColors(
                     contentColor = MaterialTheme.colorScheme.surface,
                     containerColor = MaterialTheme.colorScheme.surface,

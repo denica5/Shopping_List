@@ -1,30 +1,50 @@
 package com.example.shoppinglist.features.listDetailScreen.presentation.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.example.shoppinglist.core.presentation.viewmodel.BaseViewModel
+import com.example.shoppinglist.features.listDetailScreen.domain.entity.Product
+import com.example.shoppinglist.features.listDetailScreen.domain.usecase.CreateProductUseCase
+import com.example.shoppinglist.features.listDetailScreen.domain.usecase.DeleteAllProductsByListIdUseCase
+import com.example.shoppinglist.features.listDetailScreen.domain.usecase.DeleteCheckedProductsByListIdUseCase
+import com.example.shoppinglist.features.listDetailScreen.domain.usecase.DeleteProductByIdUseCase
+import com.example.shoppinglist.features.listDetailScreen.domain.usecase.GetProductsByListIdUseCase
+import com.example.shoppinglist.features.listDetailScreen.domain.usecase.ToggleProductCheckedUseCase
+import com.example.shoppinglist.features.listDetailScreen.domain.usecase.UpdateProductUseCase
 import com.example.shoppinglist.features.listDetailScreen.presentation.model.ListDetailAction
 import com.example.shoppinglist.features.listDetailScreen.presentation.model.ListDetailEvent
 import com.example.shoppinglist.features.listDetailScreen.presentation.model.ListDetailSheet
 import com.example.shoppinglist.features.listDetailScreen.presentation.model.ListDetailState
-import com.example.shoppinglist.features.listDetailScreen.presentation.model.Product_tmp
+import com.example.shoppinglist.features.listDetailScreen.presentation.model.ProductUi
 import com.example.shoppinglist.features.listDetailScreen.presentation.model.ProductUnit
 import com.example.shoppinglist.features.listDetailScreen.presentation.model.SortMode
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toPersistentList
 
 @HiltViewModel
-// TODO: при подключении БД настроить инжекты useCase-ов в конструкторе
-class ListDetailViewModel @Inject constructor() :
-    BaseViewModel<ListDetailEvent, ListDetailState, ListDetailAction>(ListDetailState()) {
+class ListDetailViewModel @Inject constructor(
+    private val getProductsByListIdUseCase: GetProductsByListIdUseCase,
+    private val createProductUseCase: CreateProductUseCase,
+    private val updateProductUseCase: UpdateProductUseCase,
+    private val deleteProductByIdUseCase: DeleteProductByIdUseCase,
+    private val deleteAllProductsByListIdUseCase: DeleteAllProductsByListIdUseCase,
+    private val deleteCheckedProductsByListIdUseCase: DeleteCheckedProductsByListIdUseCase,
+    private val toggleProductCheckedUseCase: ToggleProductCheckedUseCase,
+) : BaseViewModel<ListDetailEvent, ListDetailState, ListDetailAction>(ListDetailState()) {
 
     override val tag: String = "ListDetailViewModel"
-
-    // TODO: мок-данные — убрать при подключении БД
-    private var nextId = 5
-
-    // TODO: по готовности БД добавить init-блок с подпиской на flow из БД
+    private var currentListId: Int? = null
+    private var productsObserverJob: Job? = null
+    private var productsFromDb: List<ProductUi> = emptyList()
 
     override fun obtainEvent(event: ListDetailEvent) {
         when (event) {
@@ -55,6 +75,27 @@ class ListDetailViewModel @Inject constructor() :
         }
     }
 
+    fun setListId(listId: Int) {
+        if (currentListId == listId) return
+        currentListId = listId
+
+        productsObserverJob?.cancel()
+        productsObserverJob = viewModelScope.launch {
+            getProductsByListIdUseCase(listId)
+                .flowOn(Dispatchers.IO)
+                .catch { error ->
+                    Log.e(tag, "Failed to load products for listId=$listId", error)
+                }
+                .collect { products ->
+                    productsFromDb = products.map { it.toPresentation() }
+                    _state.update { state ->
+                        state.copy(
+                            products = applySorting(productsFromDb, state.sortMode)
+                        )
+                    }
+                }
+        }
+    }
 
     private fun openAddSheet() {
         _state.update {
@@ -69,7 +110,7 @@ class ListDetailViewModel @Inject constructor() :
         }
     }
 
-    private fun openEditSheet(product: Product_tmp) {
+    private fun openEditSheet(product: ProductUi) {
         _state.update {
             it.copy(
                 activeSheet = ListDetailSheet.AddEdit,
@@ -86,44 +127,66 @@ class ListDetailViewModel @Inject constructor() :
         val currentState = _state.value
         val name = currentState.inputName.trim()
         if (name.isEmpty()) return
+        val listId = currentListId ?: return
 
         val quantity = currentState.inputQuantity.toDoubleOrNull() ?: 0.0
         val unit = currentState.inputUnit
 
         val editingProduct = currentState.editingProduct
         if (editingProduct != null) {
-            // TODO: заменить на updateProductUseCase(product)
-            val updatedProducts = currentState.products.map { product ->
-                if (product.id == editingProduct.id) {
-                    product.copy(
-                        name = name,
-                        quantity = quantity,
-                        unit = unit,
-                    )
-                } else {
-                    product
+            runSafely(
+                block = {
+                    withContext(Dispatchers.IO) {
+                        updateProductUseCase(
+                            Product(
+                                id = editingProduct.id,
+                                listId = listId,
+                                name = name,
+                                quantity = quantity,
+                                unit = unit?.name,
+                                isChecked = editingProduct.isPurchased,
+                                // Keep persisted custom order untouched when editing.
+                                position = editingProduct.position,
+                            )
+                        )
+                    }
+                    _state.update {
+                        it.copy(
+                            activeSheet = null,
+                            editingProduct = null,
+                        )
+                    }
+                },
+                onError = { error ->
+                    Log.e(tag, "Failed to update product id=${editingProduct.id}", error)
                 }
-            }
-            _state.update {
-                it.copy(
-                    products = applySorting(updatedProducts, it.sortMode),
-                    editingProduct = null
-                )
-            }
-        } else {
-            // TODO: заменить на createProductUseCase(product)
-            val newProduct = Product_tmp(
-                id = nextId++,
-                name = name,
-                quantity = quantity,
-                unit = unit,
             )
-            val updatedProducts = currentState.products + newProduct
-            _state.update {
-                it.copy(
-                    products = applySorting(updatedProducts, it.sortMode)
-                )
-            }
+        } else {
+            runSafely(
+                block = {
+                    withContext(Dispatchers.IO) {
+                        createProductUseCase(
+                            Product(
+                                listId = listId,
+                                name = name,
+                                quantity = quantity,
+                                unit = unit?.name,
+                                isChecked = false,
+                                position = productsFromDb.size,
+                            )
+                        )
+                    }
+                    _state.update {
+                        it.copy(
+                            activeSheet = null,
+                            editingProduct = null,
+                        )
+                    }
+                },
+                onError = { error ->
+                    Log.e(tag, "Failed to create product for listId=$listId", error)
+                }
+            )
         }
     }
 
@@ -133,15 +196,6 @@ class ListDetailViewModel @Inject constructor() :
                 activeSheet = null,
                 isSortSubmenuVisible = false,
                 editingProduct = null,
-            )
-        }
-    }
-
-    fun dismissAddEditSheetAfterSave() {
-        _state.update {
-            it.copy(
-                activeSheet = null,
-                editingProduct = null
             )
         }
     }
@@ -174,33 +228,78 @@ class ListDetailViewModel @Inject constructor() :
         _state.update { it.copy(inputQuantity = formatQuantity(newValue)) }
     }
 
-    // TODO: заменить на updateProductUseCase(product.copy(isPurchased = !product.isPurchased)).
-    private fun togglePurchased(product: Product_tmp) {
-        _state.update { state ->
-            state.copy(
-                products = state.products.map {
-                    if (it.id == product.id) it.copy(isPurchased = !it.isPurchased) else it
+    private fun togglePurchased(product: ProductUi) {
+        runSafely(
+            block = {
+                withContext(Dispatchers.IO) {
+                    toggleProductCheckedUseCase(product.id)
                 }
-            )
-        }
+            },
+            onError = { error ->
+                Log.e(tag, "Failed to toggle purchased for product id=${product.id}", error)
+            }
+        )
     }
 
-    // TODO: заменить на deleteProductUseCase(product.id)
-    private fun deleteProduct(product: Product_tmp) {
-        _state.update { state ->
-            state.copy(
-                products = state.products.filter { it.id != product.id }
-            )
-        }
+    private fun deleteProduct(product: ProductUi) {
+        runSafely(
+            block = {
+                withContext(Dispatchers.IO) {
+                    deleteProductByIdUseCase(product.id)
+                }
+            },
+            onError = { error ->
+                Log.e(tag, "Failed to delete product id=${product.id}", error)
+            }
+        )
     }
 
-    // TODO: после перемещения сохранить новый порядок в БД
     private fun moveProduct(fromIndex: Int, toIndex: Int) {
-        _state.update { state ->
-            val mutableList = state.products.toMutableList()
-            val item = mutableList.removeAt(fromIndex)
-            mutableList.add(toIndex, item)
-            state.copy(products = mutableList)
+        val listId = currentListId ?: return
+        val state = _state.value
+        val mutableList = state.products.toMutableList()
+        val item = mutableList.removeAt(fromIndex)
+        mutableList.add(toIndex, item)
+        _state.update { it.copy(products = mutableList.toPersistentList()) }
+
+        runSafely(
+            block = {
+                withContext(Dispatchers.IO) {
+                    mutableList.forEachIndexed { index, product ->
+                        updateProductUseCase(
+                            Product(
+                                id = product.id,
+                                listId = listId,
+                                name = product.name,
+                                quantity = product.quantity,
+                                unit = product.unit?.name,
+                                isChecked = product.isPurchased,
+                                position = index,
+                            )
+                        )
+                    }
+                }
+            },
+            onError = { error ->
+                Log.e(tag, "Failed to persist products order for listId=$listId", error)
+            }
+        )
+    }
+
+    private fun Product.toPresentation(): ProductUi {
+        return ProductUi(
+            id = id,
+            name = name,
+            quantity = quantity,
+            unit = unit.toProductUnitOrNull(),
+            isPurchased = isChecked,
+            position = position,
+        )
+    }
+
+    private fun String?.toProductUnitOrNull(): ProductUnit? {
+        return this?.let { unitName ->
+            ProductUnit.entries.firstOrNull { it.name == unitName || it.label == unitName }
         }
     }
 
@@ -234,12 +333,11 @@ class ListDetailViewModel @Inject constructor() :
         _state.update { it.copy(isSortSubmenuVisible = !it.isSortSubmenuVisible) }
     }
 
-    // TODO: сортировать либо через БД, либо через UseCase
     private fun setSortMode(sortMode: SortMode) {
         _state.update { state ->
             state.copy(
                 sortMode = sortMode,
-                products = applySorting(state.products, sortMode),
+                products = applySorting(productsFromDb, sortMode),
                 isSortSubmenuVisible = false,
                 activeSheet = null,
             )
@@ -259,14 +357,19 @@ class ListDetailViewModel @Inject constructor() :
         _state.update { it.copy(isDeleteAllDialogVisible = false) }
     }
 
-    // TODO: заменить на deleteAllProductsUseCase(listId).
     private fun confirmDeleteAll() {
-        _state.update {
-            it.copy(
-                products = emptyList(),
-                isDeleteAllDialogVisible = false,
-            )
-        }
+        val listId = currentListId ?: return
+        runSafely(
+            block = {
+                withContext(Dispatchers.IO) {
+                    deleteAllProductsByListIdUseCase(listId)
+                }
+                _state.update { it.copy(isDeleteAllDialogVisible = false) }
+            },
+            onError = { error ->
+                Log.e(tag, "Failed to delete all products for listId=$listId", error)
+            }
+        )
     }
 
     private fun showClearPurchasedDialog() {
@@ -282,20 +385,25 @@ class ListDetailViewModel @Inject constructor() :
         _state.update { it.copy(isClearPurchasedDialogVisible = false) }
     }
 
-    // TODO: заменить на deletePurchasedProductsUseCase(listId)
     private fun confirmClearPurchased() {
-        _state.update { state ->
-            state.copy(
-                products = state.products.filter { !it.isPurchased },
-                isClearPurchasedDialogVisible = false,
-            )
-        }
+        val listId = currentListId ?: return
+        runSafely(
+            block = {
+                withContext(Dispatchers.IO) {
+                    deleteCheckedProductsByListIdUseCase(listId)
+                }
+                _state.update { it.copy(isClearPurchasedDialogVisible = false) }
+            },
+            onError = { error ->
+                Log.e(tag, "Failed to clear purchased products for listId=$listId", error)
+            }
+        )
     }
 
-    private fun applySorting(products: List<Product_tmp>, sortMode: SortMode): List<Product_tmp> {
+    private fun applySorting(products: List<ProductUi>, sortMode: SortMode): ImmutableList<ProductUi> {
         return when (sortMode) {
-            SortMode.ALPHABETICAL -> products.sortedBy { it.name.lowercase() }
-            SortMode.CUSTOM -> products
+            SortMode.ALPHABETICAL -> products.sortedBy { it.name.lowercase() }.toPersistentList()
+            SortMode.CUSTOM -> products.toPersistentList()
         }
     }
 

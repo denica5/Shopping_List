@@ -22,7 +22,6 @@ import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -57,13 +56,13 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ListDetailScreen(
+    listId: Int,
     listName: String,
     onBackClick: () -> Unit,
     showBackButton: Boolean = true,
     viewModel: ListDetailViewModel = hiltViewModel(),
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle().value
-//    val action = viewModel.action.collectAsStateWithLifecycle().value
     val swipeController = remember { SwipeCardController() }
     val lazyListState = rememberLazyListState()
     val reorderableLazyListState = rememberReorderableLazyListState(lazyListState) { from, to ->
@@ -87,14 +86,8 @@ fun ListDetailScreen(
         animationSpec = tween(durationMillis = 300),
     )
 
-    val prevProductCount = remember { mutableStateOf(state.products.size) }
-
-    LaunchedEffect(state.products.size) {
-        if (state.activeSheet == ListDetailSheet.AddEdit && state.products.size != prevProductCount.value) {
-            prevProductCount.value = state.products.size
-            bottomSheetState.partialExpand()
-            viewModel.dismissAddEditSheetAfterSave()
-        }
+    LaunchedEffect(listId) {
+        viewModel.setListId(listId)
     }
 
     LaunchedEffect(Unit) {

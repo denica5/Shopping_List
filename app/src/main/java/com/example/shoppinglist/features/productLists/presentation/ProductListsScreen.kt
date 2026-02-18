@@ -35,7 +35,7 @@ import com.example.shoppinglist.features.productLists.presentation.model.Product
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProductListsScreen(
-    onItemClick: (String) -> Unit,
+    onItemClick: (ProductList) -> Unit,
     viewModel: ProductListsViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle().value

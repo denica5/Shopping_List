@@ -32,11 +32,11 @@ import com.example.shoppinglist.core.presentation.ui.components.SlButtons
 import com.example.shoppinglist.core.presentation.ui.components.SlIcon
 import com.example.shoppinglist.core.presentation.ui.components.SwipeCardController
 import com.example.shoppinglist.core.presentation.ui.components.SwipeContainer
-import com.example.shoppinglist.features.listDetailScreen.presentation.model.Product_tmp
+import com.example.shoppinglist.features.listDetailScreen.presentation.model.ProductUi
 
 @Composable
 fun ProductItem(
-    product: Product_tmp,
+    product: ProductUi,
     showDragHandle: Boolean,
     isDragging: Boolean,
     controller: SwipeCardController,
@@ -95,7 +95,7 @@ fun ProductItem(
 
 @Composable
 private fun ProductItemContent(
-    product: Product_tmp,
+    product: ProductUi,
     showDragHandle: Boolean,
     dragModifier: Modifier = Modifier,
     onTogglePurchased: () -> Unit,
