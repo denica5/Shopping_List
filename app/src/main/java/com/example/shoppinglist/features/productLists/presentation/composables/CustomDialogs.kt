@@ -20,12 +20,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color.Companion.Blue
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.example.shoppinglist.R
+import com.example.shoppinglist.core.presentation.ui.components.SlDialogs
 import com.example.shoppinglist.core.theme.AppDimens.HeightBase
 import com.example.shoppinglist.core.theme.AppDimens.PaddingBase
 import com.example.shoppinglist.features.productLists.presentation.model.ProductListsAction
@@ -35,62 +37,19 @@ object CustomDialogs {
     @Composable
     fun ShowCreateDialog(action: ProductListsAction.ShowCreateDialog) {
         var query by remember { mutableStateOf("") }
-        val context = LocalContext.current
-        val focusManager = LocalFocusManager.current
 
-        AlertDialog(
-            onDismissRequest = {
-                action.onCancelBtnClick()
-            },
-            title = { Text(stringResource(R.string.adding_list)) },
-            text = {
-                BasicTextField(
-                    value = query,
-                    onValueChange = { newValue ->
-                        query = newValue
-                    },
-                    keyboardActions = KeyboardActions(onDone = {
-                        focusManager.clearFocus()
-                    }),
-                    cursorBrush = SolidColor(Blue),
-                    singleLine = true,
-                    modifier = Modifier
-                        .height(HeightBase)
-                        .background(MaterialTheme.colorScheme.surface)
-                        .padding(
-                            start = PaddingBase,
-                            end = PaddingBase,
-                            top = 16.dp,
-                            bottom = 16.dp
-                        ),
-                    textStyle = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurface)
-                )
-            },
-            confirmButton = {
-                TextButton(onClick = {
-                    action.onPosBtnClick(query, null)
-                }) {
-                    Text(
-                        stringResource(R.string.create),
-                        color = MaterialTheme.colorScheme.error
-                    )
-                }
-            },
-
-            dismissButton = {
-                TextButton(onClick = {
-                    action.onCancelBtnClick()
-                }) {
-                    Text(stringResource(R.string.cancel))
-                }
-            },
-            icon = {
-                Icon(
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.error
-                )
-            }
+        SlDialogs.SlTextInputDialog(
+            isShown = true,
+            title = stringResource(id = R.string.dialog_add_list_title),
+            textFieldValue = query,
+            onValueChange = { newvalue -> query = newvalue },
+            labelText = stringResource(id = R.string.dialog_list_name_label),
+            placeholder = stringResource(id = R.string.dialog_list_name_placeholder),
+            icon = ImageVector.vectorResource(R.drawable.add),
+            confirmButtonText = stringResource(id = R.string.dialog_button_create),
+            dismissButtonText = stringResource(id = R.string.dialog_button_cancel),
+            onConfirmClick = { action.onPosBtnClick(query, null) },
+            onDismissClick = { action.onCancelBtnClick() },
         )
     }
 

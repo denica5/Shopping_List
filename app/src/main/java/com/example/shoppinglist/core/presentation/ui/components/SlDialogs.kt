@@ -99,6 +99,7 @@ object SlDialogs {
                         SlButtons.SLTextButton(
                             text = dismissButtonText,
                             onClick = onDismissClick,
+                            contentColor = MaterialTheme.colorScheme.error
                         )
 
                         Spacer(modifier = Modifier.width(AppDimens.DialogTextButtonsSpacing))
@@ -106,6 +107,7 @@ object SlDialogs {
                         SlButtons.SLTextButton(
                             text = confirmButtonText,
                             onClick = onConfirmClick,
+                            contentColor = MaterialTheme.colorScheme.error
                         )
                     }
                 }
