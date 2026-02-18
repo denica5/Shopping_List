@@ -1,6 +1,7 @@
 package com.example.shoppinglist.features.auth.data.dto
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class LoginRequestDto(val email: String, val password: String)
+data class LoginRequestDto(@SerialName("email") val email: String,@SerialName("password") val password: String)
