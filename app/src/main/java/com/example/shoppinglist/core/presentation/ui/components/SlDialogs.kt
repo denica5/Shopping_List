@@ -53,7 +53,7 @@ object SlDialogs {
                 modifier = modifier
                     .width(AppDimens.DialogWidth),
                 shape = RoundedCornerShape(AppDimens.RadiusDialogDefault),
-                color = MaterialTheme.colorScheme.surface,
+                color = MaterialTheme.colorScheme.surfaceContainerHigh,
             ) {
                 Column(
                     modifier = Modifier
@@ -135,7 +135,7 @@ object SlDialogs {
                 modifier = modifier
                     .width(AppDimens.DialogWidth),
                 shape = RoundedCornerShape(AppDimens.RadiusDialogDefault),
-                color = MaterialTheme.colorScheme.surface,
+                color = MaterialTheme.colorScheme.surfaceContainerHigh,
             ) {
                 Column(
                     modifier = Modifier

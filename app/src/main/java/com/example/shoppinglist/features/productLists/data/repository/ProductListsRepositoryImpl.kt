@@ -1,5 +1,7 @@
 package com.example.shoppinglist.features.productLists.data.repository
 
+import com.example.shoppinglist.core.data.db.dao.ShoppingListDao
+import com.example.shoppinglist.core.data.db.entity.ShoppingListEntity
 import com.example.shoppinglist.features.productLists.domain.entity.ProductList
 import com.example.shoppinglist.features.productLists.domain.repository.ProductListsRepository
 import jakarta.inject.Inject
@@ -10,31 +12,39 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 @Singleton
-class ProductListsRepositoryImpl @Inject constructor() : ProductListsRepository {
+class ProductListsRepositoryImpl @Inject constructor(
+    private val shoppingListDao: ShoppingListDao
+) :
+    ProductListsRepository {
 
-    private val _productLists = MutableStateFlow<List<ProductList>>(emptyList())
-    private val productLists: StateFlow<List<ProductList>> = _productLists.asStateFlow()
-
-
-    override fun getAll(): Flow<List<ProductList>> {
-        return productLists
+    override fun getAll(): List<ProductList> {
+        return shoppingListDao.getAll()
+            .map { it -> ProductList(id = it.id, name = it.name, icon = null) }
     }
 
-    override suspend fun deleteById(id: Int) {
-        _productLists.value = _productLists.value.filter { it.id != id }
+    override suspend fun deleteById(id: Long) {
+        shoppingListDao.deleteById(id)
     }
 
     override suspend fun deleteAll() {
-        _productLists.value = emptyList()
+
     }
 
     override suspend fun update(productList: ProductList) {
-        _productLists.value = _productLists.value.map { existingList ->
-            if (existingList.id == productList.id) productList else existingList
-        }
+        shoppingListDao.update(
+            ShoppingListEntity(
+                id = productList.id,
+                name = productList.name
+            )
+        )
     }
 
     override suspend fun create(productList: ProductList) {
-        _productLists.value += productList
+        shoppingListDao.insert(
+            ShoppingListEntity(
+                id = productList.id,
+                name = productList.name
+            )
+        )
     }
 }

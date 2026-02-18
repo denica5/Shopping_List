@@ -39,7 +39,7 @@ fun ProductListsScreen(
     viewModel: ProductListsViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle().value
-    val action = viewModel.action.collectAsStateWithLifecycle().value
+    val action = viewModel.actionDialog.collectAsStateWithLifecycle().value
     var showDialog by remember { mutableStateOf(false) }
     val swipeController = remember { SwipeCardController() }
 

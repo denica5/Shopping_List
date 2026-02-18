@@ -9,11 +9,11 @@ import kotlinx.coroutines.flow.Flow
 @Singleton
 class ProductListsInteractorImpl @Inject constructor(val repository: ProductListsRepository) :
     ProductListsInteractor {
-    override fun getAll(): Flow<List<ProductList>> {
+    override fun getAll(): List<ProductList> {
         return repository.getAll()
     }
 
-    override suspend fun deleteById(id: Int) {
+    override suspend fun deleteById(id: Long) {
         repository.deleteById(id)
     }
 

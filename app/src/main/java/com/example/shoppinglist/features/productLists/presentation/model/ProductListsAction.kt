@@ -3,6 +3,8 @@ package com.example.shoppinglist.features.productLists.presentation.model
 import com.example.shoppinglist.features.productLists.domain.entity.ProductList
 
 sealed interface ProductListsAction {
+
+    object ShowNone : ProductListsAction
     class ShowCreateDialog(
         val onPosBtnClick: (name:String,icon: String?) -> Unit,
         val onCancelBtnClick: () -> Unit
@@ -10,7 +12,7 @@ sealed interface ProductListsAction {
 
     class ShowDeleteDialog(
         val productList : ProductList,
-        val onPosBtnClick: (id:Int) -> Unit,
+        val onPosBtnClick: (id:Long) -> Unit,
         val onCancelBtnClick: () -> Unit
     ) : ProductListsAction
 
