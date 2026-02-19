@@ -1,31 +1,35 @@
 package com.example.shoppinglist.features.productLists.domain.interactor
 
+import com.example.shoppinglist.core.utils.DatabaseError
+import com.example.shoppinglist.core.utils.EmptyResult
+import com.example.shoppinglist.core.utils.Result
 import com.example.shoppinglist.features.productLists.domain.entity.ProductList
 import com.example.shoppinglist.features.productLists.domain.repository.ProductListsRepository
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
-import kotlinx.coroutines.flow.Flow
 
 @Singleton
-class ProductListsInteractorImpl @Inject constructor(val repository: ProductListsRepository) :
-    ProductListsInteractor {
-    override fun getAll(): List<ProductList> {
-        return repository.getAll()
-    }
+class ProductListsInteractorImpl @Inject constructor(
+  val repository: ProductListsRepository
+) : ProductListsInteractor {
 
-    override suspend fun deleteById(id: Long) {
-        repository.deleteById(id)
-    }
+  override fun getAll(): Result<List<ProductList>, DatabaseError> {
+    return repository.getAll()
+  }
 
-    override suspend fun deleteAll() {
-        repository.deleteAll()
-    }
+  override suspend fun deleteById(id: Long): EmptyResult<DatabaseError> {
+    return repository.deleteById(id)
+  }
 
-    override suspend fun update(productList: ProductList) {
-        repository.update(productList)
-    }
+  override suspend fun deleteAll() {
+    repository.deleteAll()
+  }
 
-    override suspend fun create(productList: ProductList) {
-        repository.create(productList)
-    }
+  override suspend fun update(productList: ProductList): EmptyResult<DatabaseError> {
+    return repository.update(productList)
+  }
+
+  override suspend fun create(productList: ProductList): EmptyResult<DatabaseError> {
+    return repository.create(productList)
+  }
 }

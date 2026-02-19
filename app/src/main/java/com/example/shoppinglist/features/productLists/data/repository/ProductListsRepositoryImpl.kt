@@ -2,49 +2,56 @@ package com.example.shoppinglist.features.productLists.data.repository
 
 import com.example.shoppinglist.core.data.db.dao.ShoppingListDao
 import com.example.shoppinglist.core.data.db.entity.ShoppingListEntity
+import com.example.shoppinglist.core.data.db.toDomainResult
+import com.example.shoppinglist.core.utils.DatabaseError
+import com.example.shoppinglist.core.utils.EmptyResult
+import com.example.shoppinglist.core.utils.Result
+import com.example.shoppinglist.core.utils.asEmptyDataResult
+import com.example.shoppinglist.core.utils.map
 import com.example.shoppinglist.features.productLists.domain.entity.ProductList
 import com.example.shoppinglist.features.productLists.domain.repository.ProductListsRepository
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 
 @Singleton
 class ProductListsRepositoryImpl @Inject constructor(
-    private val shoppingListDao: ShoppingListDao
-) :
-    ProductListsRepository {
+  private val shoppingListDao: ShoppingListDao
+) : ProductListsRepository {
 
-    override fun getAll(): List<ProductList> {
-        return shoppingListDao.getAll()
-            .map { it -> ProductList(id = it.id, name = it.name, icon = null) }
-    }
+  override fun getAll(): Result<List<ProductList>, DatabaseError> {
+    return shoppingListDao.getAll()
+      .toDomainResult(DatabaseError.READ_FAILED)
+      .map { list ->
+        list.map { ProductList(id = it.id, name = it.name, icon = null) }
+      }
+  }
 
-    override suspend fun deleteById(id: Long) {
-        shoppingListDao.deleteById(id)
-    }
+  override suspend fun deleteById(id: Long): EmptyResult<DatabaseError> {
+    return shoppingListDao.deleteById(id)
+      .toDomainResult(DatabaseError.DELETE_FAILED)
+      .asEmptyDataResult()
+  }
 
-    override suspend fun deleteAll() {
+  override suspend fun deleteAll() {
+  }
 
-    }
+  override suspend fun update(productList: ProductList): EmptyResult<DatabaseError> {
+    return shoppingListDao.update(
+      ShoppingListEntity(
+        id = productList.id,
+        name = productList.name
+      )
+    ).toDomainResult(DatabaseError.UPDATE_FAILED)
+      .asEmptyDataResult()
+  }
 
-    override suspend fun update(productList: ProductList) {
-        shoppingListDao.update(
-            ShoppingListEntity(
-                id = productList.id,
-                name = productList.name
-            )
-        )
-    }
-
-    override suspend fun create(productList: ProductList) {
-        shoppingListDao.insert(
-            ShoppingListEntity(
-                id = productList.id,
-                name = productList.name
-            )
-        )
-    }
+  override suspend fun create(productList: ProductList): EmptyResult<DatabaseError> {
+    return shoppingListDao.insert(
+      ShoppingListEntity(
+        id = productList.id,
+        name = productList.name
+      )
+    ).toDomainResult(DatabaseError.INSERT_FAILED)
+      .asEmptyDataResult()
+  }
 }

@@ -1,6 +1,7 @@
 package com.example.shoppinglist.features.productLists.presentation
 
 import com.example.shoppinglist.core.presentation.viewmodel.BaseViewModel
+import com.example.shoppinglist.core.utils.onSuccess
 import com.example.shoppinglist.features.productLists.domain.entity.ProductList
 import com.example.shoppinglist.features.productLists.domain.interactor.ProductListsInteractor
 import com.example.shoppinglist.features.productLists.presentation.model.ProductListsAction
@@ -33,8 +34,8 @@ class ProductListsViewModel @Inject constructor(
 
     private fun updateList() {
         runSafely(block = {
-            _state.update {
-                it.copy(productLists = interactor.getAll())
+            interactor.getAll().onSuccess { lists ->
+                _state.update { it.copy(productLists = lists) }
             }
         }, onError = {})
     }

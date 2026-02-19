@@ -2,16 +2,18 @@ package com.example.shoppinglist.core.data.db.dao
 
 import android.content.ContentValues
 import android.database.Cursor
+import com.example.shoppinglist.core.data.db.DatabaseResult
 import com.example.shoppinglist.core.data.db.ShoppingListDbHelper
 import com.example.shoppinglist.core.data.db.ShoppingListDbHelper.Companion.COLUMN_PRODUCT_ID
 import com.example.shoppinglist.core.data.db.ShoppingListDbHelper.Companion.COLUMN_PRODUCT_NAME
 import com.example.shoppinglist.core.data.db.ShoppingListDbHelper.Companion.TABLE_PRODUCT_NAMES
 import com.example.shoppinglist.core.data.db.entity.ProductNameEntity
+import com.example.shoppinglist.core.data.db.safeDbCall
 import java.io.IOException
 
 class ProductNameDao(private val dbHelper: ShoppingListDbHelper) {
 
-  fun insert(entity: ProductNameEntity): Long {
+  fun insert(entity: ProductNameEntity): DatabaseResult<Long> = safeDbCall {
     val db = dbHelper.writableDatabase
     val values = ContentValues().apply {
       put(COLUMN_PRODUCT_NAME, entity.name)
@@ -23,10 +25,10 @@ class ProductNameDao(private val dbHelper: ShoppingListDbHelper) {
       android.database.sqlite.SQLiteDatabase.CONFLICT_IGNORE
     )
     if (id == -1L) throw IOException("Failed to insert product name")
-    return id
+    id
   }
 
-  fun search(query: String): List<ProductNameEntity> {
+  fun search(query: String): DatabaseResult<List<ProductNameEntity>> = safeDbCall {
     val db = dbHelper.readableDatabase
     val cursor = db.query(
       TABLE_PRODUCT_NAMES,
@@ -37,10 +39,10 @@ class ProductNameDao(private val dbHelper: ShoppingListDbHelper) {
       null,
       "$COLUMN_PRODUCT_NAME ASC"
     )
-    return cursor.use { parseListFromCursor(it) }
+    cursor.use { parseListFromCursor(it) }
   }
 
-  fun getAll(): List<ProductNameEntity> {
+  fun getAll(): DatabaseResult<List<ProductNameEntity>> = safeDbCall {
     val db = dbHelper.readableDatabase
     val cursor = db.query(
       TABLE_PRODUCT_NAMES,
@@ -51,7 +53,7 @@ class ProductNameDao(private val dbHelper: ShoppingListDbHelper) {
       null,
       "$COLUMN_PRODUCT_NAME ASC"
     )
-    return cursor.use { parseListFromCursor(it) }
+    cursor.use { parseListFromCursor(it) }
   }
 
   private fun parseListFromCursor(cursor: Cursor): List<ProductNameEntity> {
