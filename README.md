@@ -24,3 +24,20 @@
 |DI| Всплывающая подсказка при поиске товара|Экран авторизации|Настройка темы|Библиотека полей ввода и диалогов|
 |data/domain экрана продуктов| Тестирование БД |Базовая ViewModel|Добавление detekt и подпись приложения|Планшетная верстка|
 
+## Принятые в команде правила
+
+- Работа через feature-ветки
+- Merge только через Pull Request
+- Обязательный code review
+- Соблюдение Clean Architecture
+- Использование DI (Hilt)
+- Бизнес-логика вынесена в domain слой
+
+## Архитектура проекта
+
+Проект реализован с использованием Clean Architecture и MVI.
+
+Слои:
+- presentation — Compose UI + ViewModel
+- domain — UseCase и модели
+- data — Repository, Firebase, SQLite
