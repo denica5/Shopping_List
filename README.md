@@ -1,4 +1,4 @@
-# Приложение Список покупок
+# Приложение - Список покупок
 
 ##  Стек технологий
 - **Архитектура:** MVI 
@@ -41,3 +41,5 @@
 - presentation — Compose UI + ViewModel
 - domain — UseCase и модели
 - data — Repository, Firebase, SQLite
+
+Запись работы приложения: https://drive.google.com/file/d/1pRnM4Xb-mccPglexw72hyGKn4-vWp3SO/view?usp=sharing
