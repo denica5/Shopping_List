@@ -30,7 +30,7 @@ object SlTextFields {
         textStyle: TextStyle = MaterialTheme.typography.bodyLarge,
         colors: SlTextFieldColors = SlTextFieldDefaults.colors(),
         isError: Boolean = false,
-        supportText: @Composable () -> Unit = {}
+        supportText: (@Composable () -> Unit)? = null
     ) {
         val safeValue = value.take(64)
         SlTextField(
@@ -43,6 +43,7 @@ object SlTextFields {
             placeholder = placeholder,
             singleLine = singleLine,
             textColor = colors.textColor,
+            placeholderColor = colors.placeholderColor,
             textStyle = textStyle,
             labelColor = colors.labelColor,
             labelBackgroundColor = colors.labelBackgroundColor,
@@ -111,6 +112,7 @@ object SlTextFields {
         placeholder: String? = null,
         singleLine: Boolean = true,
         textColor: Color = MaterialTheme.colorScheme.onSurface,
+        placeholderColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
         textStyle: TextStyle = MaterialTheme.typography.bodyLarge,
         containerColor: Color = Color.Transparent,
         labelColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -118,7 +120,7 @@ object SlTextFields {
         borderColor: Color = MaterialTheme.colorScheme.outline,
         keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
         isError: Boolean = false,
-        supportText: @Composable () -> Unit = {}
+        supportText: (@Composable () -> Unit)? = null
     ) {
         OutlinedTextField(
             modifier = modifier,
@@ -148,7 +150,7 @@ object SlTextFields {
                     Text(
                         text = text,
                         style = MaterialTheme.typography.bodyLarge,
-                        color = textColor.copy(alpha = 0.6f),
+                        color = placeholderColor,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
@@ -174,6 +176,7 @@ object SlTextFields {
 
 data class SlTextFieldColors(
     val textColor: Color,
+    val placeholderColor: Color,
     val labelColor: Color,
     val labelBackgroundColor: Color,
     val borderColor: Color,
@@ -183,12 +186,14 @@ object SlTextFieldDefaults {
     @Composable
     fun colors(
         textColor: Color = MaterialTheme.colorScheme.onSurface,
+        placeholderColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
         labelColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
         labelBackgroundColor: Color = MaterialTheme.colorScheme.surface,
         borderColor: Color = MaterialTheme.colorScheme.outline,
     ): SlTextFieldColors =
         SlTextFieldColors(
             textColor = textColor,
+            placeholderColor = placeholderColor,
             labelColor = labelColor,
             labelBackgroundColor = labelBackgroundColor,
             borderColor = borderColor,

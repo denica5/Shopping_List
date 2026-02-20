@@ -22,22 +22,22 @@ class ProductsRepositoryImpl @Inject constructor(
     private val shoppingItemDao: ShoppingItemDao,
 ) : ProductsRepository {
 
-    private val _products = MutableStateFlow<Map<Int, List<Product>>>(emptyMap())
-    private val products: StateFlow<Map<Int, List<Product>>> = _products.asStateFlow()
+    private val _products = MutableStateFlow<Map<Long, List<Product>>>(emptyMap())
+    private val products: StateFlow<Map<Long, List<Product>>> = _products.asStateFlow()
 
-    override fun getAllByListId(listId: Int): Flow<List<Product>> {
+    override fun getAllByListId(listId: Long): Flow<List<Product>> {
         return flow {
             refreshList(listId)
             emitAll(products.map { it[listId].orEmpty() })
         }
     }
 
-    override suspend fun deleteById(id: Int) {
-        val product = shoppingItemDao.getById(id.toLong()).toDomainResult()
+    override suspend fun deleteById(id: Long) {
+        val product = shoppingItemDao.getById(id).toDomainResult()
         product.onSuccess {
             if (it != null) {
                 val refresh = it.toDomain()
-                shoppingItemDao.deleteById(id.toLong())
+                shoppingItemDao.deleteById(id)
                 refreshList(refresh.listId)
             } else {
                 return
@@ -47,7 +47,7 @@ class ProductsRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun deleteAllByListId(listId: Int) {
+    override suspend fun deleteAllByListId(listId: Long) {
         val existing = shoppingItemDao.getByListId(listId.toLong()).toDomainResult()
 
         existing.onSuccess { existing ->
@@ -59,7 +59,7 @@ class ProductsRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun deleteCheckedByListId(listId: Int) {
+    override suspend fun deleteCheckedByListId(listId: Long) {
         shoppingItemDao.deleteBoughtByListId(listId.toLong())
         refreshList(listId)
     }
@@ -74,12 +74,12 @@ class ProductsRepositoryImpl @Inject constructor(
         refreshList(product.listId)
     }
 
-    override suspend fun toggleChecked(id: Int) {
+    override suspend fun toggleChecked(id: Long) {
         val product = shoppingItemDao.getById(id.toLong()).toDomainResult()
         product.onSuccess {
             if (it != null) {
                 shoppingItemDao.updateBoughtStatus(id.toLong(), !it.isBought)
-                refreshList(it.listId.toInt())
+                refreshList(it.listId)
             } else {
                 return
             }
@@ -88,7 +88,7 @@ class ProductsRepositoryImpl @Inject constructor(
         }
     }
 
-    private suspend fun refreshList(listId: Int) {
+    private suspend fun refreshList(listId: Long) {
         val productsForList = shoppingItemDao.getByListId(listId.toLong()).toDomainResult()
         productsForList.onSuccess { productsForListSuccess ->
             val domainProducts = productsForListSuccess.map { it.toDomain() }
@@ -103,8 +103,8 @@ class ProductsRepositoryImpl @Inject constructor(
 
     private fun Product.toEntity(): ShoppingItemEntity {
         return ShoppingItemEntity(
-            id = id.toLong(),
-            listId = listId.toLong(),
+            id = id,
+            listId = listId,
             name = name,
             quantity = quantity.takeIf { it > 0.0 },
             unit = unit,
@@ -115,8 +115,8 @@ class ProductsRepositoryImpl @Inject constructor(
 
     private fun ShoppingItemEntity.toDomain(): Product {
         return Product(
-            id = id.toInt(),
-            listId = listId.toInt(),
+            id = id,
+            listId = listId,
             name = name,
             quantity = quantity ?: 0.0,
             unit = unit,

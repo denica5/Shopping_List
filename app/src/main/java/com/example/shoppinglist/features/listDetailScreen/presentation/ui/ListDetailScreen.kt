@@ -56,7 +56,7 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ListDetailScreen(
-    listId: Int,
+    listId: Long,
     listName: String,
     onBackClick: () -> Unit,
     showBackButton: Boolean = true,

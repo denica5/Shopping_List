@@ -9,6 +9,8 @@ import com.example.shoppinglist.features.listDetailScreen.domain.usecase.DeleteA
 import com.example.shoppinglist.features.listDetailScreen.domain.usecase.DeleteCheckedProductsByListIdUseCase
 import com.example.shoppinglist.features.listDetailScreen.domain.usecase.DeleteProductByIdUseCase
 import com.example.shoppinglist.features.listDetailScreen.domain.usecase.GetProductsByListIdUseCase
+import com.example.shoppinglist.features.listDetailScreen.domain.usecase.SaveProductNameUseCase
+import com.example.shoppinglist.features.listDetailScreen.domain.usecase.SearchProductNamesUseCase
 import com.example.shoppinglist.features.listDetailScreen.domain.usecase.ToggleProductCheckedUseCase
 import com.example.shoppinglist.features.listDetailScreen.domain.usecase.UpdateProductUseCase
 import com.example.shoppinglist.features.listDetailScreen.presentation.model.ListDetailAction
@@ -25,6 +27,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.collections.immutable.ImmutableList
@@ -39,11 +42,14 @@ class ListDetailViewModel @Inject constructor(
     private val deleteAllProductsByListIdUseCase: DeleteAllProductsByListIdUseCase,
     private val deleteCheckedProductsByListIdUseCase: DeleteCheckedProductsByListIdUseCase,
     private val toggleProductCheckedUseCase: ToggleProductCheckedUseCase,
+    private val saveProductNameUseCase: SaveProductNameUseCase,
+    private val searchProductNamesUseCase: SearchProductNamesUseCase,
 ) : BaseViewModel<ListDetailEvent, ListDetailState, ListDetailAction>(ListDetailState()) {
 
     override val tag: String = "ListDetailViewModel"
-    private var currentListId: Int? = null
+    private var currentListId: Long? = null
     private var productsObserverJob: Job? = null
+    private var searchJob: Job? = null
     private var productsFromDb: List<ProductUi> = emptyList()
 
     override fun obtainEvent(event: ListDetailEvent) {
@@ -76,7 +82,7 @@ class ListDetailViewModel @Inject constructor(
         }
     }
 
-    fun setListId(listId: Int) {
+    fun setListId(listId: Long) {
         if (currentListId == listId) return
         currentListId = listId
 
@@ -130,7 +136,7 @@ class ListDetailViewModel @Inject constructor(
         if (name.isEmpty()) return
         val listId = currentListId ?: return
 
-        viewModelScope.launch { saveProductName(name) }
+        viewModelScope.launch { saveProductNameUseCase(name) }
 
         val quantity = currentState.inputQuantity.toDoubleOrNull() ?: 0.0
         val unit = currentState.inputUnit
@@ -208,7 +214,7 @@ class ListDetailViewModel @Inject constructor(
         searchJob?.cancel()
         searchJob = viewModelScope.launch {
             delay(SEARCH_DEBOUNCE_MS)
-            val suggestions = searchProductNames(name)
+            val suggestions = searchProductNamesUseCase(name)
             _state.update { it.copy(nameSuggestions = suggestions) }
         }
     }

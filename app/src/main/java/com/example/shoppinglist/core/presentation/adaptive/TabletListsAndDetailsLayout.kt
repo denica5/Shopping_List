@@ -35,7 +35,7 @@ import com.example.shoppinglist.features.productLists.presentation.ProductListsS
 
 @Composable
 fun TabletListsAndDetailsLayout() {
-    var selectedListId by rememberSaveable { mutableStateOf<Int?>(null) }
+    var selectedListId by rememberSaveable { mutableStateOf<Long?>(null) }
     var selectedListName by rememberSaveable { mutableStateOf<String?>(null) }
 
     Row(modifier = Modifier.fillMaxSize()) {

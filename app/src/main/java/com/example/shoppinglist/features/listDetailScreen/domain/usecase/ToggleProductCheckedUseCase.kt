@@ -6,7 +6,7 @@ import jakarta.inject.Inject
 class ToggleProductCheckedUseCase @Inject constructor(
     private val repository: ProductsRepository
 ) {
-    suspend operator fun invoke(id: Int) {
+    suspend operator fun invoke(id: Long) {
         repository.toggleChecked(id)
     }
 }

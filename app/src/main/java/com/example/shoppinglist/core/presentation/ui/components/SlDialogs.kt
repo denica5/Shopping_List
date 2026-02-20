@@ -86,7 +86,10 @@ object SlDialogs {
                         onValueChange = onValueChange,
                         labelText = labelText,
                         placeholder = placeholder,
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = SlTextFieldDefaults.colors(
+                            labelBackgroundColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                        ),
                     )
 
                     Spacer(modifier = Modifier.height(AppDimens.DialogContentTopSpacing))

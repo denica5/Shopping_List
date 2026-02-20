@@ -4,7 +4,7 @@ import androidx.compose.runtime.Immutable
 
 @Immutable
 data class ProductUi(
-    val id: Int,
+    val id: Long,
     val name: String,
     val quantity: Double,
     val unit: ProductUnit? = null,

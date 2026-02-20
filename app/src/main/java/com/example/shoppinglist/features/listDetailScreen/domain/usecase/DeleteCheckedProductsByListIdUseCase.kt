@@ -6,7 +6,7 @@ import jakarta.inject.Inject
 class DeleteCheckedProductsByListIdUseCase @Inject constructor(
     private val repository: ProductsRepository
 ) {
-    suspend operator fun invoke(listId: Int) {
+    suspend operator fun invoke(listId: Long) {
         repository.deleteCheckedByListId(listId)
     }
 }

@@ -6,7 +6,7 @@ import jakarta.inject.Inject
 class DeleteAllProductsByListIdUseCase @Inject constructor(
     private val repository: ProductsRepository
 ) {
-    suspend operator fun invoke(listId: Int) {
+    suspend operator fun invoke(listId: Long) {
         repository.deleteAllByListId(listId)
     }
 }

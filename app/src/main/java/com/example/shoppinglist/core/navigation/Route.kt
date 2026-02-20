@@ -10,7 +10,7 @@ sealed interface Route : NavKey {
     data object ProductLists : Route, NavKey
 
     @Serializable
-    data class ListDetailScreen(val listId: Int, val listName: String) : Route, NavKey
+    data class ListDetailScreen(val listId: Long, val listName: String) : Route, NavKey
 
     @Serializable
     data object LoginScreen : Route, NavKey
