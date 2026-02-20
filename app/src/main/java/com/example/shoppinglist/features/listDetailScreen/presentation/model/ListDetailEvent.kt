@@ -27,4 +27,5 @@ sealed interface ListDetailEvent {
     object DismissClearPurchasedDialog : ListDetailEvent
 
     object BackClick : ListDetailEvent
+    data class SuggestionSelected(val name: String) : ListDetailEvent
 }
