@@ -1,5 +1,7 @@
 package com.example.shoppinglist.features.listDetailScreen.data.repository
 
+import com.example.shoppinglist.core.data.db.dao.ShoppingItemDao
+import com.example.shoppinglist.core.data.db.entity.ShoppingItemEntity
 import com.example.shoppinglist.features.listDetailScreen.domain.entity.Product
 import com.example.shoppinglist.features.listDetailScreen.domain.repository.ProductsRepository
 import jakarta.inject.Inject
@@ -8,41 +10,88 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 
 @Singleton
-class ProductsRepositoryImpl @Inject constructor() : ProductsRepository {
+class ProductsRepositoryImpl @Inject constructor(
+    private val shoppingItemDao: ShoppingItemDao,
+) : ProductsRepository {
 
-    private val _products = MutableStateFlow<List<Product>>(emptyList())
-    private val products: StateFlow<List<Product>> = _products.asStateFlow()
+    private val _products = MutableStateFlow<Map<Int, List<Product>>>(emptyMap())
+    private val products: StateFlow<Map<Int, List<Product>>> = _products.asStateFlow()
 
     override fun getAllByListId(listId: Int): Flow<List<Product>> {
-        return products.map { productList ->
-            productList.filter { it.listId == listId }
+        return flow {
+            refreshList(listId)
+            emitAll(products.map { it[listId].orEmpty() })
         }
     }
 
     override suspend fun deleteById(id: Int) {
-        _products.value = _products.value.filter { it.id != id }
+        val product = shoppingItemDao.getById(id.toLong())?.toDomain() ?: return
+        shoppingItemDao.deleteById(id.toLong())
+        refreshList(product.listId)
     }
 
     override suspend fun deleteAllByListId(listId: Int) {
-        _products.value = _products.value.filter { it.listId != listId }
+        val existing = shoppingItemDao.getByListId(listId.toLong())
+        existing.forEach { entity ->
+            shoppingItemDao.deleteById(entity.id)
+        }
+        refreshList(listId)
+    }
+
+    override suspend fun deleteCheckedByListId(listId: Int) {
+        shoppingItemDao.deleteBoughtByListId(listId.toLong())
+        refreshList(listId)
     }
 
     override suspend fun update(product: Product) {
-        _products.value = _products.value.map { existingProduct ->
-            if (existingProduct.id == product.id) product else existingProduct
-        }
+        shoppingItemDao.update(product.toEntity())
+        refreshList(product.listId)
     }
 
     override suspend fun create(product: Product) {
-        _products.value += product
+        shoppingItemDao.insert(product.toEntity())
+        refreshList(product.listId)
     }
 
     override suspend fun toggleChecked(id: Int) {
-        _products.value = _products.value.map { product ->
-            if (product.id == id) product.copy(isChecked = !product.isChecked) else product
+        val product = shoppingItemDao.getById(id.toLong())?.toDomain() ?: return
+        shoppingItemDao.updateBoughtStatus(id.toLong(), !product.isChecked)
+        refreshList(product.listId)
+    }
+
+    private suspend fun refreshList(listId: Int) {
+        val productsForList = shoppingItemDao.getByListId(listId.toLong()).map { it.toDomain() }
+        _products.value = _products.value.toMutableMap().apply {
+            put(listId, productsForList)
         }
+    }
+
+    private fun Product.toEntity(): ShoppingItemEntity {
+        return ShoppingItemEntity(
+            id = id.toLong(),
+            listId = listId.toLong(),
+            name = name,
+            quantity = quantity.takeIf { it > 0.0 },
+            unit = unit,
+            isBought = isChecked,
+            position = position,
+        )
+    }
+
+    private fun ShoppingItemEntity.toDomain(): Product {
+        return Product(
+            id = id.toInt(),
+            listId = listId.toInt(),
+            name = name,
+            quantity = quantity ?: 0.0,
+            unit = unit,
+            isChecked = isBought,
+            position = position,
+        )
     }
 }

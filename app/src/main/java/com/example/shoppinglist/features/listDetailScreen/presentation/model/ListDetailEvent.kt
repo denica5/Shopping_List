@@ -4,15 +4,15 @@ sealed interface ListDetailEvent {
     object AddProductClick : ListDetailEvent
     object SaveProductClick : ListDetailEvent
     object DismissSheet : ListDetailEvent
-    data class EditProductClick(val product: Product_tmp) : ListDetailEvent
+    data class EditProductClick(val product: ProductUi) : ListDetailEvent
     data class InputNameChanged(val name: String) : ListDetailEvent
     data class InputQuantityChanged(val quantity: String) : ListDetailEvent
     data class InputUnitChanged(val unit: ProductUnit) : ListDetailEvent
     object IncrementQuantity : ListDetailEvent
     object DecrementQuantity : ListDetailEvent
 
-    data class TogglePurchased(val product: Product_tmp) : ListDetailEvent
-    data class DeleteProduct(val product: Product_tmp) : ListDetailEvent
+    data class TogglePurchased(val product: ProductUi) : ListDetailEvent
+    data class DeleteProduct(val product: ProductUi) : ListDetailEvent
     data class MoveProduct(val fromIndex: Int, val toIndex: Int) : ListDetailEvent
 
     object MenuClick : ListDetailEvent

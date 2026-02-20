@@ -1,14 +1,18 @@
 package com.example.shoppinglist.features.listDetailScreen.presentation.model
 
-// TODO: по готовности БД — заменить Product_tmp на доменную модель
+import androidx.compose.runtime.Immutable
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+
+@Immutable
 data class ListDetailState(
-    val products: List<Product_tmp> = emptyList(),
+    val products: ImmutableList<ProductUi> = persistentListOf(),
     val sortMode: SortMode = SortMode.ALPHABETICAL,
     val activeSheet: ListDetailSheet? = null,
     val isSortSubmenuVisible: Boolean = false,
     val isDeleteAllDialogVisible: Boolean = false,
     val isClearPurchasedDialogVisible: Boolean = false,
-    val editingProduct: Product_tmp? = null,
+    val editingProduct: ProductUi? = null,
     val inputName: String = "",
     val inputQuantity: String = "",
     val inputUnit: ProductUnit? = null,

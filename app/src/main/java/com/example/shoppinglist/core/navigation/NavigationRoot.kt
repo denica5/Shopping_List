@@ -65,7 +65,12 @@ fun NavigationRoot(
                             ProductListsScreen(
                                 onItemClick =
                                     {
-                                        backStack.add(Route.ListDetailScreen(it))
+                                        backStack.add(
+                                            Route.ListDetailScreen(
+                                                listId = it.id,
+                                                listName = it.name
+                                            )
+                                        )
                                     }
                             )
                         }
@@ -75,7 +80,8 @@ fun NavigationRoot(
                 is Route.ListDetailScreen -> {
                     NavEntry(key) {
                         ListDetailScreen(
-                            listName = key.todo,
+                            listId = key.listId,
+                            listName = key.listName,
                             onBackClick = { backStack.remove(key) },
                         )
                     }

@@ -7,6 +7,7 @@ interface ProductsRepository {
     fun getAllByListId(listId: Int): Flow<List<Product>>
     suspend fun deleteById(id: Int)
     suspend fun deleteAllByListId(listId: Int)
+    suspend fun deleteCheckedByListId(listId: Int)
     suspend fun update(product: Product)
     suspend fun create(product: Product)
     suspend fun toggleChecked(id: Int)

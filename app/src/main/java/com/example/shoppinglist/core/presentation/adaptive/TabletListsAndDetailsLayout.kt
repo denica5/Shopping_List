@@ -35,6 +35,7 @@ import com.example.shoppinglist.features.productLists.presentation.ProductListsS
 
 @Composable
 fun TabletListsAndDetailsLayout() {
+    var selectedListId by rememberSaveable { mutableStateOf<Int?>(null) }
     var selectedListName by rememberSaveable { mutableStateOf<String?>(null) }
 
     Row(modifier = Modifier.fillMaxSize()) {
@@ -44,7 +45,10 @@ fun TabletListsAndDetailsLayout() {
                 .fillMaxHeight()
         ) {
             ProductListsScreen(
-                onItemClick = { selectedListName = it },
+                onItemClick = {
+                    selectedListId = it.id
+                    selectedListName = it.name
+                },
             )
         }
 
@@ -62,10 +66,12 @@ fun TabletListsAndDetailsLayout() {
                 .background(MaterialTheme.colorScheme.background)
         ) {
             val detailTitle = selectedListName
-            if (detailTitle == null) {
+            val detailId = selectedListId
+            if (detailTitle == null || detailId == null) {
                 EmptyDetailPlaceholder()
             } else {
                 ListDetailScreen(
+                    listId = detailId,
                     listName = detailTitle,
                     onBackClick = {},
                     showBackButton = false,

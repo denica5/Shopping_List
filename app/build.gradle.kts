@@ -125,6 +125,8 @@ dependencies {
 
     implementation(libs.reorderable)
 
+    implementation(libs.kotlinx.collections.immutable)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
