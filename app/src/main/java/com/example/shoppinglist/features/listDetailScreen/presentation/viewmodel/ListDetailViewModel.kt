@@ -2,6 +2,8 @@ package com.example.shoppinglist.features.listDetailScreen.presentation.viewmode
 
 import androidx.lifecycle.viewModelScope
 import com.example.shoppinglist.core.presentation.viewmodel.BaseViewModel
+import com.example.shoppinglist.features.listDetailScreen.domain.usecase.SaveProductNameUseCase
+import com.example.shoppinglist.features.listDetailScreen.domain.usecase.SearchProductNamesUseCase
 import com.example.shoppinglist.features.listDetailScreen.presentation.model.ListDetailAction
 import com.example.shoppinglist.features.listDetailScreen.presentation.model.ListDetailEvent
 import com.example.shoppinglist.features.listDetailScreen.presentation.model.ListDetailSheet
@@ -11,18 +13,24 @@ import com.example.shoppinglist.features.listDetailScreen.presentation.model.Pro
 import com.example.shoppinglist.features.listDetailScreen.presentation.model.SortMode
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @HiltViewModel
 // TODO: при подключении БД настроить инжекты useCase-ов в конструкторе
-class ListDetailViewModel @Inject constructor() :
+class ListDetailViewModel @Inject constructor(
+    private val searchProductNames: SearchProductNamesUseCase,
+    private val saveProductName: SaveProductNameUseCase,
+) :
     BaseViewModel<ListDetailEvent, ListDetailState, ListDetailAction>(ListDetailState()) {
 
     override val tag: String = "ListDetailViewModel"
 
     // TODO: мок-данные — убрать при подключении БД
     private var nextId = 5
+    private var searchJob: Job? = null
 
     // TODO: по готовности БД добавить init-блок с подпиской на flow из БД
 
@@ -52,6 +60,7 @@ class ListDetailViewModel @Inject constructor() :
             is ListDetailEvent.BackClick -> {
                 viewModelScope.launch { _action.emit(ListDetailAction.NavigateBack) }
             }
+            is ListDetailEvent.SuggestionSelected -> selectSuggestion(event.name)
         }
     }
 
@@ -86,6 +95,8 @@ class ListDetailViewModel @Inject constructor() :
         val currentState = _state.value
         val name = currentState.inputName.trim()
         if (name.isEmpty()) return
+
+        viewModelScope.launch { saveProductName(name) }
 
         val quantity = currentState.inputQuantity.toDoubleOrNull() ?: 0.0
         val unit = currentState.inputUnit
@@ -148,6 +159,16 @@ class ListDetailViewModel @Inject constructor() :
 
     private fun updateInputName(name: String) {
         _state.update { it.copy(inputName = name) }
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
+            delay(SEARCH_DEBOUNCE_MS)
+            val suggestions = searchProductNames(name)
+            _state.update { it.copy(nameSuggestions = suggestions) }
+        }
+    }
+
+    private fun selectSuggestion(name: String) {
+        _state.update { it.copy(inputName = name, nameSuggestions = emptyList()) }
     }
 
     private fun updateInputQuantity(quantity: String) {
@@ -305,5 +326,9 @@ class ListDetailViewModel @Inject constructor() :
         } else {
             value.toString()
         }
+    }
+
+    companion object {
+        private const val SEARCH_DEBOUNCE_MS = 300L
     }
 }

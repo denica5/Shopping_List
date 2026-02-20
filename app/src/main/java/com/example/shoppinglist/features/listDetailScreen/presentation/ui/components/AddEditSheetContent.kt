@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.navigationBars
@@ -56,6 +57,7 @@ fun AddEditSheetContent(
     onUnitChanged: (ProductUnit) -> Unit,
     onIncrement: () -> Unit,
     onDecrement: () -> Unit,
+    onSuggestionSelected: (String) -> Unit = {},
 ) {
     Surface(
         shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
@@ -69,6 +71,7 @@ fun AddEditSheetContent(
             onUnitChanged = onUnitChanged,
             onIncrement = onIncrement,
             onDecrement = onDecrement,
+            onSuggestionSelected = onSuggestionSelected,
         )
     }
 }
@@ -81,6 +84,7 @@ private fun AddEditProductContent(
     onUnitChanged: (ProductUnit) -> Unit,
     onIncrement: () -> Unit,
     onDecrement: () -> Unit,
+    onSuggestionSelected: (String) -> Unit,
 ) {
     var isUnitDropdownExpanded by remember { mutableStateOf(false) }
     val canDecrement = (state.inputQuantity.toDoubleOrNull() ?: 0.0) > 0.0
@@ -101,15 +105,39 @@ private fun AddEditProductContent(
             labelBackgroundColor = MaterialTheme.colorScheme.surfaceContainerLow,
         )
 
-        // ввод названия продукта
-        SlTextFields.SlInputTextField(
-            value = state.inputName,
-            onValueChange = onNameChanged,
-            labelText = stringResource(R.string.product_textfield_lable),
-            placeholder = stringResource(R.string.add_new_product_placeholder),
-            modifier = Modifier.fillMaxWidth(),
-            colors = sheetLabelColors,
-        )
+        // ввод названия продукта с автозаполнением
+        Box {
+            SlTextFields.SlInputTextField(
+                value = state.inputName,
+                onValueChange = onNameChanged,
+                labelText = stringResource(R.string.product_textfield_lable),
+                placeholder = stringResource(R.string.add_new_product_placeholder),
+                modifier = Modifier.fillMaxWidth(),
+                colors = sheetLabelColors,
+            )
+
+            DropdownMenu(
+                expanded = state.nameSuggestions.isNotEmpty(),
+                onDismissRequest = { onSuggestionSelected(state.inputName) },
+                containerColor = MaterialTheme.colorScheme.surface,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(max = 200.dp),
+            ) {
+                state.nameSuggestions.forEach { suggestion ->
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                text = suggestion,
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = MaterialTheme.colorScheme.onSurface,
+                            )
+                        },
+                        onClick = { onSuggestionSelected(suggestion) },
+                    )
+                }
+            }
+        }
 
         Spacer(Modifier.height(16.dp))
 
