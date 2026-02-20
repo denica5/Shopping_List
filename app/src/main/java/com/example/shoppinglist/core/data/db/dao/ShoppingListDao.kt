@@ -2,17 +2,19 @@ package com.example.shoppinglist.core.data.db.dao
 
 import android.content.ContentValues
 import android.database.Cursor
+import com.example.shoppinglist.core.data.db.DatabaseResult
 import com.example.shoppinglist.core.data.db.ShoppingListDbHelper
 import com.example.shoppinglist.core.data.db.ShoppingListDbHelper.Companion.COLUMN_LIST_CREATED_AT
 import com.example.shoppinglist.core.data.db.ShoppingListDbHelper.Companion.COLUMN_LIST_ID
 import com.example.shoppinglist.core.data.db.ShoppingListDbHelper.Companion.COLUMN_LIST_NAME
 import com.example.shoppinglist.core.data.db.ShoppingListDbHelper.Companion.TABLE_SHOPPING_LISTS
 import com.example.shoppinglist.core.data.db.entity.ShoppingListEntity
+import com.example.shoppinglist.core.data.db.safeDbCall
 import java.io.IOException
 
 class ShoppingListDao(private val dbHelper: ShoppingListDbHelper) {
 
-  fun insert(entity: ShoppingListEntity): Long {
+  fun insert(entity: ShoppingListEntity): DatabaseResult<Long> = safeDbCall {
     val db = dbHelper.writableDatabase
     val values = ContentValues().apply {
       put(COLUMN_LIST_NAME, entity.name)
@@ -20,10 +22,10 @@ class ShoppingListDao(private val dbHelper: ShoppingListDbHelper) {
     }
     val id = db.insert(TABLE_SHOPPING_LISTS, null, values)
     if (id == -1L) throw IOException("Failed to insert shopping list")
-    return id
+    id
   }
 
-  fun update(entity: ShoppingListEntity) {
+  fun update(entity: ShoppingListEntity): DatabaseResult<Unit> = safeDbCall {
     val db = dbHelper.writableDatabase
     val values = ContentValues().apply {
       put(COLUMN_LIST_NAME, entity.name)
@@ -38,7 +40,7 @@ class ShoppingListDao(private val dbHelper: ShoppingListDbHelper) {
     if (rows == 0) throw IOException("Failed to update shopping list with id=${entity.id}")
   }
 
-  fun rename(listId: Long, name: String) {
+  fun rename(listId: Long, name: String): DatabaseResult<Unit> = safeDbCall {
     val db = dbHelper.writableDatabase
     val values = ContentValues().apply {
       put(COLUMN_LIST_NAME, name)
@@ -52,7 +54,7 @@ class ShoppingListDao(private val dbHelper: ShoppingListDbHelper) {
     if (rows == 0) throw IOException("Failed to rename shopping list with id=$listId")
   }
 
-  fun deleteById(listId: Long) {
+  fun deleteById(listId: Long): DatabaseResult<Unit> = safeDbCall {
     val db = dbHelper.writableDatabase
     val rows = db.delete(
       TABLE_SHOPPING_LISTS,
@@ -62,7 +64,7 @@ class ShoppingListDao(private val dbHelper: ShoppingListDbHelper) {
     if (rows == 0) throw IOException("Failed to delete shopping list with id=$listId")
   }
 
-  fun getAll(): List<ShoppingListEntity> {
+  fun getAll(): DatabaseResult<List<ShoppingListEntity>> = safeDbCall {
     val db = dbHelper.readableDatabase
     val cursor = db.query(
       TABLE_SHOPPING_LISTS,
@@ -73,10 +75,10 @@ class ShoppingListDao(private val dbHelper: ShoppingListDbHelper) {
       null,
       "$COLUMN_LIST_CREATED_AT DESC"
     )
-    return cursor.use { parseListFromCursor(it) }
+    cursor.use { parseListFromCursor(it) }
   }
 
-  fun getById(listId: Long): ShoppingListEntity? {
+  fun getById(listId: Long): DatabaseResult<ShoppingListEntity?> = safeDbCall {
     val db = dbHelper.readableDatabase
     val cursor = db.query(
       TABLE_SHOPPING_LISTS,
@@ -87,7 +89,7 @@ class ShoppingListDao(private val dbHelper: ShoppingListDbHelper) {
       null,
       null
     )
-    return cursor.use { c ->
+    cursor.use { c ->
       if (c.moveToFirst()) parseEntityFromCursor(c) else null
     }
   }
