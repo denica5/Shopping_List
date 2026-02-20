@@ -53,7 +53,7 @@ object SlDialogs {
                 modifier = modifier
                     .width(AppDimens.DialogWidth),
                 shape = RoundedCornerShape(AppDimens.RadiusDialogDefault),
-                color = MaterialTheme.colorScheme.surface,
+                color = MaterialTheme.colorScheme.surfaceContainerHigh,
             ) {
                 Column(
                     modifier = Modifier
@@ -99,6 +99,7 @@ object SlDialogs {
                         SlButtons.SLTextButton(
                             text = dismissButtonText,
                             onClick = onDismissClick,
+                            contentColor = MaterialTheme.colorScheme.error
                         )
 
                         Spacer(modifier = Modifier.width(AppDimens.DialogTextButtonsSpacing))
@@ -106,6 +107,7 @@ object SlDialogs {
                         SlButtons.SLTextButton(
                             text = confirmButtonText,
                             onClick = onConfirmClick,
+                            contentColor = MaterialTheme.colorScheme.error
                         )
                     }
                 }
@@ -133,7 +135,7 @@ object SlDialogs {
                 modifier = modifier
                     .width(AppDimens.DialogWidth),
                 shape = RoundedCornerShape(AppDimens.RadiusDialogDefault),
-                color = MaterialTheme.colorScheme.surface,
+                color = MaterialTheme.colorScheme.surfaceContainerHigh,
             ) {
                 Column(
                     modifier = Modifier

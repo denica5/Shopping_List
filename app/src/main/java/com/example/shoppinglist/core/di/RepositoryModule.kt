@@ -4,7 +4,9 @@ import com.example.shoppinglist.features.auth.data.AuthRepositoryImpl
 import com.example.shoppinglist.features.auth.domain.AuthRepository
 import com.example.shoppinglist.features.productLists.data.repository.ProductListsRepositoryImpl
 import com.example.shoppinglist.features.productLists.domain.repository.ProductListsRepository
+import com.example.shoppinglist.features.listDetailScreen.data.repository.ProductNameRepositoryImpl
 import com.example.shoppinglist.features.listDetailScreen.data.repository.ProductsRepositoryImpl
+import com.example.shoppinglist.features.listDetailScreen.domain.repository.ProductNameRepository
 import com.example.shoppinglist.features.listDetailScreen.domain.repository.ProductsRepository
 import com.google.firebase.auth.FirebaseAuth
 import dagger.Binds
@@ -29,6 +31,12 @@ abstract class RepositoryModule {
     abstract fun bindProductsRepository(
         impl: ProductsRepositoryImpl
     ): ProductsRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindProductNameRepository(
+        impl: ProductNameRepositoryImpl
+    ): ProductNameRepository
 
     @Binds
     @Singleton

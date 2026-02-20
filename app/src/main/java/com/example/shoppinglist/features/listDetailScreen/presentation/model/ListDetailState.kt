@@ -16,4 +16,5 @@ data class ListDetailState(
     val inputName: String = "",
     val inputQuantity: String = "",
     val inputUnit: ProductUnit? = null,
+    val nameSuggestions: List<String> = emptyList(),
 )

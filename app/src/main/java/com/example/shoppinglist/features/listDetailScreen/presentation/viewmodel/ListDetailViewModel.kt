@@ -72,6 +72,7 @@ class ListDetailViewModel @Inject constructor(
             is ListDetailEvent.BackClick -> {
                 viewModelScope.launch { _action.emit(ListDetailAction.NavigateBack) }
             }
+            is ListDetailEvent.SuggestionSelected -> selectSuggestion(event.name)
         }
     }
 
@@ -128,6 +129,8 @@ class ListDetailViewModel @Inject constructor(
         val name = currentState.inputName.trim()
         if (name.isEmpty()) return
         val listId = currentListId ?: return
+
+        viewModelScope.launch { saveProductName(name) }
 
         val quantity = currentState.inputQuantity.toDoubleOrNull() ?: 0.0
         val unit = currentState.inputUnit
@@ -202,6 +205,16 @@ class ListDetailViewModel @Inject constructor(
 
     private fun updateInputName(name: String) {
         _state.update { it.copy(inputName = name) }
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
+            delay(SEARCH_DEBOUNCE_MS)
+            val suggestions = searchProductNames(name)
+            _state.update { it.copy(nameSuggestions = suggestions) }
+        }
+    }
+
+    private fun selectSuggestion(name: String) {
+        _state.update { it.copy(inputName = name, nameSuggestions = emptyList()) }
     }
 
     private fun updateInputQuantity(quantity: String) {
@@ -413,5 +426,9 @@ class ListDetailViewModel @Inject constructor(
         } else {
             value.toString()
         }
+    }
+
+    companion object {
+        private const val SEARCH_DEBOUNCE_MS = 300L
     }
 }

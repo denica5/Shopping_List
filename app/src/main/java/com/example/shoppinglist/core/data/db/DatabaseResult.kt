@@ -1,6 +1,8 @@
 package com.example.shoppinglist.core.data.db
 
+import com.example.shoppinglist.core.utils.DatabaseError
 import java.io.IOException
+import com.example.shoppinglist.core.utils.Result as DomainResult
 
 sealed class DatabaseResult<out T> {
 
@@ -28,5 +30,14 @@ inline fun <T> safeDbCall(block: () -> T): DatabaseResult<T> {
     DatabaseResult.Success(block())
   } catch (e: IOException) {
     DatabaseResult.Error(e)
+  }
+}
+
+fun <T> DatabaseResult<T>.toDomainResult(
+  errorType: DatabaseError = DatabaseError.UNKNOWN
+): DomainResult<T, DatabaseError> {
+  return when (this) {
+    is DatabaseResult.Success -> DomainResult.Success(data)
+    is DatabaseResult.Error -> DomainResult.Error(errorType)
   }
 }

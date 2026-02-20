@@ -160,6 +160,9 @@ fun ListDetailScreen(
                         onUnitChanged = { viewModel.obtainEvent(ListDetailEvent.InputUnitChanged(it)) },
                         onIncrement = { viewModel.obtainEvent(ListDetailEvent.IncrementQuantity) },
                         onDecrement = { viewModel.obtainEvent(ListDetailEvent.DecrementQuantity) },
+                        onSuggestionSelected = {
+                            viewModel.obtainEvent(ListDetailEvent.SuggestionSelected(it))
+                        },
                     )
                 } else if (state.products.isNotEmpty()) {
                     MenuSheetContent(

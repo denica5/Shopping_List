@@ -1,8 +1,7 @@
 package com.example.shoppinglist.features.productLists.presentation
 
-import android.util.Log
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import com.example.shoppinglist.core.presentation.viewmodel.BaseViewModel
+import com.example.shoppinglist.core.utils.onSuccess
 import com.example.shoppinglist.features.productLists.domain.entity.ProductList
 import com.example.shoppinglist.features.productLists.domain.interactor.ProductListsInteractor
 import com.example.shoppinglist.features.productLists.presentation.model.ProductListsAction
@@ -10,51 +9,58 @@ import com.example.shoppinglist.features.productLists.presentation.model.Product
 import com.example.shoppinglist.features.productLists.presentation.model.ProductListsState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 
 @HiltViewModel
-class ProductListsViewModel @Inject constructor(val interactor: ProductListsInteractor) :
-    ViewModel() {
+class ProductListsViewModel @Inject constructor(
+    val interactor: ProductListsInteractor,
+) :
+    BaseViewModel<ProductListsEvent, ProductListsState, ProductListsAction>(
+        ProductListsState(
+            mutableListOf()
+        )
+    ) {
+    override val tag: String = "ProductListsViewModel"
+    private val _actionDialog = MutableStateFlow<ProductListsAction?>(null)
+    val actionDialog = _actionDialog.asStateFlow()
 
-    var id = 1
-    private val _state = MutableStateFlow(ProductListsState(mutableListOf()))
-    val state = _state.asStateFlow()
-    private val _action = MutableStateFlow<ProductListsAction?>(null)
-    val action = _action.asStateFlow()
 
     init {
-        viewModelScope.launch {
-            interactor.getAll()
-                .collect { lists ->
-                    _state.update {
-                        it.copy(productLists = lists)
-                    }
-                }
-        }
+        updateList()
     }
 
-    fun obtainEvent(event: ProductListsEvent) {
+
+    private fun updateList() {
+        runSafely(block = {
+            interactor.getAll().onSuccess { lists ->
+                _state.update { it.copy(productLists = lists) }
+            }
+        }, onError = {})
+    }
+
+
+    override fun obtainEvent(event: ProductListsEvent) {
         when (event) {
             is ProductListsEvent.BtnCopyInClick -> {
-                viewModelScope.launch {
+                runSafely(block = {
                     clearAction()
-                    id += 1
-                    interactor.create(event.productList.copy(id = id))
-                }
+                    interactor.create(event.productList)
+                    updateList()
+                }, onError = {})
             }
 
             is ProductListsEvent.BtnEditInClick -> {
-                _action.update {
+                _actionDialog.update {
                     ProductListsAction.ShowEditDialog(
                         onPosBtnClick = { list ->
-                            viewModelScope.launch {
+                            runSafely(block = {
                                 clearAction()
                                 interactor.update(list)
-                            }
+                                updateList()
+                            }, onError = {})
+
                         },
                         onCancelBtnClick = { clearAction() },
                         productList = event.productList
@@ -63,13 +69,15 @@ class ProductListsViewModel @Inject constructor(val interactor: ProductListsInte
             }
 
             is ProductListsEvent.BtnDeleteAllInClick -> {
-                _action.update {
+                _actionDialog.update {
                     ProductListsAction.ShowDeleteAllDialog(
                         onPosBtnClick = {
-                            viewModelScope.launch {
+                            runSafely(block = {
                                 clearAction()
                                 interactor.deleteAll()
-                            }
+                                updateList()
+                            }, onError = {})
+
                         },
                         onCancelBtnClick = { clearAction() }
                     )
@@ -77,14 +85,17 @@ class ProductListsViewModel @Inject constructor(val interactor: ProductListsInte
             }
 
             is ProductListsEvent.BtnCreateInClick -> {
-                _action.update {
+                _actionDialog.update {
                     ProductListsAction.ShowCreateDialog(
                         onPosBtnClick = { name, icon ->
                             clearAction()
-                            id += 1
-                            viewModelScope.launch {
-                                interactor.create(ProductList(name = name, icon = icon, id = id))
-                            }
+
+                            runSafely(block = {
+                                interactor.create(ProductList(name = name, icon = icon))
+                                updateList()
+                            }, onError = {})
+
+
                         },
                         onCancelBtnClick = {
                             clearAction()
@@ -93,14 +104,16 @@ class ProductListsViewModel @Inject constructor(val interactor: ProductListsInte
             }
 
             is ProductListsEvent.BtnDeleteInClick -> {
-                _action.update {
+                _actionDialog.update {
                     ProductListsAction.ShowDeleteDialog(
                         onPosBtnClick = { id ->
                             clearAction()
 
-                            viewModelScope.launch {
+                            runSafely(block = {
                                 interactor.deleteById(id)
-                            }
+                                updateList()
+                            }, onError = {})
+
                         },
                         onCancelBtnClick = {
                             clearAction()
@@ -112,23 +125,8 @@ class ProductListsViewModel @Inject constructor(val interactor: ProductListsInte
         }
     }
 
-    private fun runSafely(
-        block: suspend () -> Unit,
-        onError: suspend (Throwable) -> Unit
-    ) {
-        viewModelScope.launch(Dispatchers.IO) {
-            runCatching {
-                block()
-            }.onFailure { error ->
-                Log.e("tag", "error in run safely", error)
-
-                onError(error)
-            }
-        }
-    }
-
     private fun clearAction() {
-        _action.update { null }
+        _actionDialog.update { null }
     }
 }
 
