@@ -20,7 +20,11 @@
 
 
 <p>
+    <img src= "https://i.imgur.com/WSrScbq.png" width="210">
     <img src= "https://i.imgur.com/im1la28.png" width="210">
+    <img src= "https://imgur.com/5m81nzv.png" width="210">
+    <img src= "https://imgur.com/4zbfx83.png" width="210">
+    <img src= "https://imgur.com/yD4i3Yq.png" width="210">
 </p>
 
 
